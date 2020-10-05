@@ -47,10 +47,16 @@ app.get("/gojira", async function(req, res, next) {
     });
     // cast_ids.push("abc");
     const promises = cast_ids.map((id) => axios.get(BASE_URL + "/actor/" + id));
-    Promise.allSettled(promises) // BUG one fail, all fails
+    Promise.allSettled(promises)
       .then((results) => {
-        results.map((e) => console.log(e.status));
-        const validResults = results.filter((e) => e.status === "fulfilled");
+        // results.map((e) => console.log(e.status));
+        const [ validResults, badResults ] = _.partition(
+          results,
+          (e) => e.status === "fulfilled"
+        );
+        if (badResults.length >= 1) {
+          console.log(badResults);
+        }
         const actors = validResults.map((e) => e.value.data);
         const gimme = (actor) => _.pick(actor, [ "name", "birthday", "meta" ]);
         const summary = _.sortBy(_.map(actors, gimme), [
