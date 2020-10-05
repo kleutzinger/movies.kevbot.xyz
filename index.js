@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const TMDB_KEY = process.env.TMDB_KEY;
 if (!process.env.BASE_URL) {
-  process.env.BASE_URL = "https://actors.kevbot.xyz";
+  process.env.BASE_URL = "http://actors.kevbot.xyz";
 }
 const BASE_URL = process.env.BASE_URL;
 
