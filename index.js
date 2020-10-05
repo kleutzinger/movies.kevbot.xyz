@@ -10,6 +10,7 @@ const client = require("./db.js");
 const express = require("express");
 const axios = require("axios");
 const PORT = process.env.PORT || 5000;
+const INTERNAL_URL = `http://localhost:${PORT}`;
 const app = express();
 const _ = require("lodash");
 const bodyParser = require("body-parser");
@@ -46,7 +47,9 @@ app.get("/gojira", async function(req, res, next) {
       return `${base_url}/actor/${e}`;
     });
     // cast_ids.push("abc");
-    const promises = cast_ids.map((id) => axios.get(BASE_URL + "/actor/" + id));
+    const promises = cast_ids.map((id) =>
+      axios.get(INTERNAL_URL + "/actor/" + id)
+    );
     Promise.allSettled(promises)
       .then((results) => {
         // results.map((e) => console.log(e.status));
