@@ -45,12 +45,18 @@ app.get("/gojira", async function(req, res, next) {
       const base_url = process.env.BASE_URL;
       return `${base_url}/actor/${e}`;
     });
+    // cast_ids.push("abc");
     const promises = cast_ids.map((id) => axios.get(BASE_URL + "/actor/" + id));
-    Promise.all(promises) // BUG one fail, all fails
-      .then((data) => {
-        const actors = data.map((e) => e.data);
+    Promise.allSettled(promises) // BUG one fail, all fails
+      .then((results) => {
+        results.map((e) => console.log(e.status));
+        const validResults = results.filter((e) => e.status === "fulfilled");
+        const actors = validResults.map((e) => e.value.data);
         const gimme = (actor) => _.pick(actor, [ "name", "birthday", "meta" ]);
-        const summary = _.sortBy(_.map(actors, gimme), "meta.status");
+        const summary = _.sortBy(_.map(actors, gimme), [
+          "meta.status",
+          (a) => -a.meta.age // sort by oldest alive first
+        ]);
         res.json({ summary, clickable, data: resp.data });
       })
       .catch((error) => {
