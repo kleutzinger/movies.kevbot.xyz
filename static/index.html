@@ -5,6 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.20.0/dist/axios.min.js"
+    integrity="sha256-KyY5SqyBmXeM0zfYBGU1tuqcstxpjkECApypY+CA4Z8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@4.7.2/dist/js/tabulator.min.js"
+    integrity="sha256-MXVVvLTA87/De5G7VXpMOAXUHXEaaj9BroBQTz4cgls=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@4.7.2/dist/css/tabulator.min.css"
+    integrity="sha256-ZpikKUhrU7ZxfqKh8PT2V4w9w1sHDokJa/czD+netyM=" crossorigin="anonymous">
+  <script src="/tablemaker.js"></script>
   <script src="/client.js"></script>
 </head>
 
@@ -15,8 +22,17 @@
     <a href="/movie/1678">/movie/1678 (Gojira)</a>
     <br>
     <a href="/actor/1420">/actor/1420 </a>
+    <div id="input form">
+      <label for="movie_id">
+        <a href="https://www.themoviedb.org/" target=”_blank” rel=”noopener noreferrer”>tmdb movie_id</a>
+        <input id="movie_id" type="text" value="77" /> <br />
+        <button id="submit">submit</button>
+      </label>
+    </div>
+    <h2 id="movie_name">hi</h2>
+    <div class="tabulator" id="tabulator"></div>
   </div>
-
+  <!-- <iframe src="https://themoviedb.org"></iframe> -->
 </body>
 
 </html>

@@ -23,7 +23,6 @@ app.use(bodyParser.json());
 // app.set('view engine', 'pug');
 var cors = require("cors");
 app.use(cors());
-app.use(express.static("static"));
 app.use(morgan("tiny"));
 
 const server = app.listen(PORT, () => {
@@ -36,6 +35,12 @@ const server = app.listen(PORT, () => {
 
 const gojira = "https://api.themoviedb.org/3/movie/1678";
 const default_params = { api_key: TMDB_KEY, language: "en-US" };
+
+app.get("/", async (req, res) => {
+  console.log("gettin");
+  res.sendFile(path.join(__dirname, "static/index.html"));
+});
+app.use(express.static("static"));
 
 app.get("/gojira", (req, res) => {
   req.url = "/movie/1678";
@@ -66,12 +71,14 @@ app.get("/movie/:id", async function(req, res, next) {
         //   console.log(badResults);
         // }
         const actors = validResults.map((e) => e.value);
-        const gimme = (actor) => _.pick(actor, [ "name", "birthday", "meta" ]);
-        const summary = _.sortBy(_.map(actors, gimme), [
+        // prettier-ignore
+        const gimme = (actor) => _.pick(actor, ["id", "name", "birthday", "meta"]);
+        const cast_summary = _.sortBy(_.map(actors, gimme), [
+          // (p) => -p.meta.popularity,
           "meta.status",
           (a) => -a.meta.age // sort by oldest alive first
         ]);
-        res.json({ summary, clickable, data: resp.data });
+        res.json({ cast: cast_summary, movie: resp });
       })
       .catch((error) => {
         next(error);
@@ -137,6 +144,7 @@ async function get_tmdb(id, loc = "actor") {
 
 function actor_meta(actor) {
   let status, age, died_at, imdb_link, tmdb_link;
+
   if (!actor.birthday) {
     status = "no_bday";
   } else if (actor.deathday) {
@@ -152,7 +160,14 @@ function actor_meta(actor) {
   }
   tmdb_link = "https://www.themoviedb.org/person/" + actor.id;
 
-  return { status, age, died_at, imdb_link, tmdb_link };
+  return {
+    status,
+    age,
+    died_at,
+    imdb_link,
+    tmdb_link,
+    popularity : actor.popularity
+  };
 }
 
 function getAge(start, until = new Date()) {
@@ -164,21 +179,3 @@ function getAge(start, until = new Date()) {
   }
   return age;
 }
-
-const exampl_actor = {
-  birthday             : "1897-12-01",
-  known_for_department : "Acting",
-  deathday             : "1967-12-29",
-  id                   : 134406,
-  name                 : "Toranosuke Ogawa",
-  also_known_as        : [ "小川虎之助", "小川寅次" ],
-  gender               : 2,
-  biography            : "",
-  popularity           : 1.4,
-  place_of_birth       : "Tokyo, Tokyo Prefecture, Japan",
-  profile_path         : "/ity0fmKfozqyLjhNZN4Rzv65NSZ.jpg",
-  adult                : false,
-  imdb_id              : "nm0644574",
-  homepage             : null,
-  cache_miss           : true
-};
