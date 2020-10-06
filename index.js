@@ -37,18 +37,23 @@ const server = app.listen(PORT, () => {
 const gojira = "https://api.themoviedb.org/3/movie/1678";
 const default_params = { api_key: TMDB_KEY, language: "en-US" };
 
-app.get("/gojira", async function(req, res, next) {
+app.get("/gojira", (req, res) => {
+  req.url = "/movie/1678";
+  app.handle(req, res);
+});
+
+app.get("/movie/:id", async function(req, res, next) {
   try {
-    const params = _.assign({ append_to_response: "credits" }, default_params);
-    const resp = await axios.get(gojira, { params: params });
-    const cast_ids = _.get(resp.data, "credits.cast").map((e) => e.id);
+    const resp = await get_tmdb(req.params.id, "movie");
+    const cast_ids = _.get(resp, "credits.cast").map((e) => e.id);
     const clickable = cast_ids.slice(0).map((e) => {
       const base_url = process.env.BASE_URL;
       return `${base_url}/actor/${e}`;
     });
     // cast_ids.push("abc");
-    const promises = cast_ids.map((id) =>
-      axios.get(INTERNAL_URL + "/actor/" + id)
+    const promises = cast_ids.map(
+      // (id) => axios.get(INTERNAL_URL + "/actor/" + id)
+      (id) => get_tmdb(id, "actor")
     );
     Promise.allSettled(promises)
       .then((results) => {
@@ -57,10 +62,10 @@ app.get("/gojira", async function(req, res, next) {
           results,
           (e) => e.status === "fulfilled"
         );
-        if (badResults.length >= 1) {
-          console.log(badResults);
-        }
-        const actors = validResults.map((e) => e.value.data);
+        // if (badResults.length >= 1) {
+        //   console.log(badResults);
+        // }
+        const actors = validResults.map((e) => e.value);
         const gimme = (actor) => _.pick(actor, [ "name", "birthday", "meta" ]);
         const summary = _.sortBy(_.map(actors, gimme), [
           "meta.status",
@@ -81,45 +86,57 @@ app.get("/gojira", async function(req, res, next) {
 // app.get("/alives/:movie_id")
 // TODO age in film
 
-app.get("/movie/:id", async function(req, res, next) {
-  try {
-    const endpoint = "https://api.themoviedb.org/3/movie/" + req.params.id;
-    res.json({ msg: "TODO ", endpoint });
-  } catch (error) {
-    next(error);
-  }
-});
-
 app.get("/actor/:id", async function(req, res, next) {
   try {
-    const endpoint = "https://api.themoviedb.org/3/person/" + req.params.id;
-    // check cache
-    const cache_key = req.path;
-    const cached = await client.get(cache_key);
-    if (cached != null) {
-      res.json(JSON.parse(cached));
-    } else {
-      // cache miss, ask tMDB api about actor
-      console.log("api hit " + cache_key);
-      const resp = await axios.get(endpoint, { params: default_params });
-      if (resp.status === 200) {
-        // we have a new actor
-        const actor = resp.data;
-        actor.meta = actor_meta(actor);
-        client.setex(cache_key, 3600 * 24, JSON.stringify(actor));
-      }
-      resp.data.cache_miss = true;
-      res.json(resp.data);
-    }
+    const actor = await get_tmdb(req.params.id, "actor");
+    res.json(actor);
   } catch (error) {
     next(error);
   }
 });
 
+async function get_tmdb(id, loc = "actor") {
+  // loc = actor | movie
+  // TODO | config
+  // get actor value from cache or api
+  let cache_key, endpoint, extra_params, thing;
+
+  if (loc === "actor" || loc === "person") {
+    cache_key = "/actor/" + id;
+    endpoint = "https://api.themoviedb.org/3/person/" + id;
+  } else if (loc === "movie") {
+    cache_key = "/movie/" + id;
+    endpoint = "https://api.themoviedb.org/3/movie/" + id;
+    extra_params = { append_to_response: "credits" };
+  } else {
+    throw "loc not equal actor | movie";
+  }
+  // check cache
+  const cached = await client.get(cache_key);
+  if (cached != null) {
+    thing = JSON.parse(cached);
+  } else {
+    console.log("askd tmbd api " + cache_key);
+    // console.log(_.assign(default_params, extra_params));
+    const resp = await axios.get(endpoint, {
+      params : _.assign(default_params, extra_params)
+    });
+    if (resp.status === 200 && !_.isEmpty(resp.data)) {
+      thing = resp.data;
+      // prettier-ignore
+      if (loc == "actor") {thing = _.omit(thing, [ "credits", "biography", "also_known_as" ]);}
+      client.setex(cache_key, 3600 * 24, JSON.stringify(thing));
+      thing.cache_miss = true;
+    }
+  }
+  if (loc === "actor") {
+    thing.meta = actor_meta(thing);
+  }
+  return thing;
+}
+
 function actor_meta(actor) {
-  let status;
-  let age;
-  let died_at;
+  let status, age, died_at, imdb_link, tmdb_link;
   if (!actor.birthday) {
     status = "no_bday";
   } else if (actor.deathday) {
@@ -130,7 +147,12 @@ function actor_meta(actor) {
     status = "alive";
     age = getAge(new Date(actor.birthday), new Date());
   }
-  return { status, age, died_at };
+  if (actor.imdb_id) {
+    imdb_link = "https://www.imdb.com/name/" + actor.imdb_id;
+  }
+  tmdb_link = "https://www.themoviedb.org/person/" + actor.id;
+
+  return { status, age, died_at, imdb_link, tmdb_link };
 }
 
 function getAge(start, until = new Date()) {
