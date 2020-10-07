@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.js" integrity="sha256-QTriwEK1XTUJdKp3So7tMDUvZSTLOPpUv8F/J+UwJ8M=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@0.20.0/dist/axios.min.js"
     integrity="sha256-KyY5SqyBmXeM0zfYBGU1tuqcstxpjkECApypY+CA4Z8=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@4.7.2/dist/js/tabulator.min.js"
@@ -13,24 +14,30 @@
     integrity="sha256-ZpikKUhrU7ZxfqKh8PT2V4w9w1sHDokJa/czD+netyM=" crossorigin="anonymous">
   <script src="/tablemaker.js"></script>
   <script src="/client.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+  <link rel="stylesheet" href="/style.css">
+
 </head>
 
 <body>
   <div class="main">
+    
+    <!-- <a href="https://www.themoviedb.org/" target=”_blank” rel=”noopener noreferrer”>tmdb movie_id</a> -->
+    <div id="search_wrapper">
+      <label for="search_input">
+        <input id="search_input" type="text"/> <br />
+        <button id="search_button">search</button>
+      </label>
+    <div id="search_results"> results here</div>
+    </div>
+    <h2 id="movie_name">hi</h2>
+    <h2 id="thing_name">thing_name</h2>
+    <div class="tabulator" id="tabulator"></div>
     <a href="/gojira">/gojira</a>
     <br>
     <a href="/movie/1678">/movie/1678 (Gojira)</a>
     <br>
     <a href="/actor/1420">/actor/1420 </a>
-    <div id="input form">
-      <label for="movie_id">
-        <a href="https://www.themoviedb.org/" target=”_blank” rel=”noopener noreferrer”>tmdb movie_id</a>
-        <input id="movie_id" type="text" value="77" /> <br />
-        <button id="submit">submit</button>
-      </label>
-    </div>
-    <h2 id="movie_name">hi</h2>
-    <div class="tabulator" id="tabulator"></div>
   </div>
   <!-- <iframe src="https://themoviedb.org"></iframe> -->
 </body>

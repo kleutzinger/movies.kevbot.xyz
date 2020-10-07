@@ -19,6 +19,7 @@ const morgan = require("morgan");
 const path = require("path");
 var fs = require("fs");
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.set('view engine', 'pug');
 var cors = require("cors");
@@ -101,6 +102,33 @@ app.get("/actor/:id", async function(req, res, next) {
     next(error);
   }
 });
+
+app.post("/search", async function(req, res, next) {
+  try {
+    // https://api.themoviedb.org/3/search/multi?api_key=<<api_key>>&language=en-US&page=1&include_adult=false
+    const loc = req.body.loc;
+    const query = req.body.query;
+    console.log({ loc, query });
+    const resp = await search_tmdb(query, loc);
+    res.json(resp);
+  } catch (error) {
+    next(error);
+  }
+});
+
+async function search_tmdb(query, loc = "multi", page = 1) {
+  // loc === multi | movie | person
+  if (![ "multi", "movie", "person" ].includes(loc)) throw "bad loc";
+  let endpoint = "https://api.themoviedb.org/3/search/" + loc + "/";
+  let extra_params = { query, adult: "false", page };
+  const resp = await axios.get(endpoint, {
+    params : _.assign(default_params, extra_params)
+  });
+  if (resp.status === 200 && !_.isEmpty(resp.data)) {
+    const results = resp.data;
+    return results;
+  }
+}
 
 async function get_tmdb(id, loc = "actor") {
   // loc = actor | movie

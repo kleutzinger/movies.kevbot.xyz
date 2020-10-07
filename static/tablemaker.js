@@ -5,6 +5,7 @@ function populateTable(cast, movie) {
     // prettier-ignore
     columns: genColumns(),
     cellVertAlign : "middle",
+    layout        : "fitData",
     // layout      : 'fitColumns',
     initialSort   : [
       //set the initial sort order of the data
@@ -15,12 +16,13 @@ function populateTable(cast, movie) {
 
 function genColumns() {
   return [
-    { title: "Actor", field: "name" },
+    { title: "Actor", field: "name", frozen: true },
     { title: "Status", field: "meta.status" },
-    { title: "Popularity", field: "meta.popularity" },
-    { title: "Age today", field: "meta.age" },
-    { title: "Died at", field: "meta.died_at" },
-    { title: "Age During Filming", field: "meta.filming_age" }
+    { title: "Age<br/>today", field: "meta.age" },
+    { title: "Age<br/>then", field: "meta.filming_age" },
+    { title: "Died<br/>at", field: "meta.died_at" },
+    { title: "Popularity", field: "meta.popularity" }
+
     // {
     //   title           : "Time",
     //   field           : "name",
