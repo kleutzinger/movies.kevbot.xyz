@@ -95,12 +95,13 @@ function movie_onto_cast(movie, cast) {
   // this'll be n^2 but whatever
   // returns modified cast
   cast.forEach((actor, idx, arr) => {
-    let { order } = _.find(movie.credits.cast, { id: actor.id });
+    let { order, character } = _.find(movie.credits.cast, { id: actor.id });
     if (Number.isInteger(order)) {
       arr[idx].order = order + 1;
     } else {
       arr[idx].order = 9999;
     }
+    arr[idx].character = character || "";
   });
   console.log(cast);
   return cast;

@@ -19,7 +19,8 @@ function genColumns() {
   return [
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
-    { title: "Actor", field: "name", frozen: true },
+    //prettier-ignore
+    { name: "Actor/Role", frozen:true, field: "meta.actor_role", formatter: "html" },
     { title: "Status", field: "meta.status" },
     { title: "Age<br/>today", field: "meta.age" },
     { title: "Age<br/>then", field: "meta.filming_age" },
@@ -58,6 +59,7 @@ function normalize_cast(cast, movie) {
   cast = cast.map((actor) => {
     actor.meta.filming_age = getAge(actor.birthday, movie.release_date);
     actor.meta.icon_html = actor_to_icon_html(actor, false);
+    actor.meta.actor_role = `<div>${actor.name}</br>(${actor.character})</div>`;
     return actor;
   });
   return cast;
