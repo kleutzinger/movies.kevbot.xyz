@@ -42,9 +42,12 @@ async function init() {
       search_for(search_input.value);
     }
   };
+  search_input.onkeyup = _.debounce(() => {
+    onSearchKeyUp();
+  }, 500);
 
   document.addEventListener("keydown", (event) => {
-    console.log(`key=${event.key},code=${event.code}`);
+    // console.log(`key=${event.key},code=${event.code}`);
     if (event.key.length === 1 && event.key !== " ") {
       search_input.focus();
     }
@@ -68,7 +71,7 @@ async function set_movie_table(movie_id) {
     cast = movie_onto_cast(movie, cast);
     const years_ago = -moment(movie.release_date).diff(Date.now(), "years");
     //prettier-ignore
-    let title_str = `${movie.title} (${movie.release_date}) ${years_ago} years ago`;
+    let title_str = `${movie.title} [${movie.release_date}] [${years_ago} years ago]`;
     title_str = linkify(
       title_str,
       `https://www.themoviedb.org/movie/${movie.id}`
@@ -208,6 +211,11 @@ function linkify(str, href) {
 document.addEventListener("DOMContentLoaded", init);
 
 // https://stackoverflow.com/questions/18986895/jquery-ajax-search-debounce
+
+function onSearchKeyUp() {
+  const search_val = document.getElementById("search_input").value;
+  search_for(search_val, "movie");
+}
 
 // $("#search_term").on(
 //   "keyup",
