@@ -42,6 +42,13 @@ async function init() {
       search_for(search_input.value);
     }
   };
+
+  document.addEventListener("keydown", (event) => {
+    console.log(`key=${event.key},code=${event.code}`);
+    if (event.key.length === 1) {
+      search_input.focus();
+    }
+  });
 }
 
 function create_element(htmlString) {
@@ -57,7 +64,8 @@ async function set_movie_table(movie_id) {
     console.log("getting " + endpoint);
     const resp = await axios.get(endpoint);
     console.log(resp.data.movie.title);
-    const { movie, cast } = resp.data;
+    let { movie, cast } = resp.data;
+    cast = movie_onto_cast(movie, cast);
     const years_ago = -moment(movie.release_date).diff(Date.now(), "years");
     //prettier-ignore
     let title_str = `${movie.title} (${movie.release_date}) ${years_ago} years ago`;
@@ -73,14 +81,33 @@ async function set_movie_table(movie_id) {
     console.trace("madit");
     return true;
   } catch (error) {
-    console.log("no response");
+    console.log("no response ", error);
     return false;
   }
+}
+
+function movie_onto_cast(movie, cast) {
+  // push some info from the `movie` obj onto the cast
+  // credits ordering... credits.cast[0].id
+  // this'll be n^2 but whatever
+  // returns modified cast
+  cast.forEach((actor, idx, arr) => {
+    let { order } = _.find(movie.credits.cast, { id: actor.id });
+    if (Number.isInteger(order)) {
+      arr[idx].order = order + 1;
+    } else {
+      arr[idx].order = 9999;
+    }
+  });
+  console.log(cast);
+  return cast;
 }
 
 async function search_for(query, loc = "movie", page = 1) {
   const endpoint = "/search/";
   console.log("searching for: " + query);
+  document.getElementById("search_results").innerHTML = "<p>Loading...</p>";
+
   const resp = await axios.post(endpoint, { loc, query, page });
   const rows = resp.data.results;
   const cfg = (await axios.get("/config")).data;

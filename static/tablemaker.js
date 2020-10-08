@@ -5,12 +5,12 @@ function populateTable(cast, movie) {
     // prettier-ignore
     columns: genColumns(),
     cellVertAlign : "middle",
-    layout        : "fitData"
+    layout        : "fitData",
     // layout      : 'fitColumns',
-    // initialSort   : [
-    //   //set the initial sort order of the data
-    //   // { column: "start_atp", dir: "desc" }
-    // ]
+    initialSort   : [
+      // set the initial sort order of the data
+      { column: "order", dir: "asc" }
+    ]
   });
 }
 // const cfg = (await axios.get("/config")).data;
@@ -23,6 +23,8 @@ function genColumns() {
     { title: "Age<br/>then", field: "meta.filming_age" },
     { title: "Died<br/>at", field: "meta.died_at" },
     { title: "Popularity", field: "meta.popularity" },
+    { title: "#", field: "order", visible: false },
+
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", hozAlign: "center", formatter: "html" }
 
@@ -42,7 +44,7 @@ function genColumns() {
     // { title: "G1", field: "G1", hozAlign: "center", formatter: gm_fmt },
   ];
 }
-
+// https://github.com/olifolkerd/tabulator/issues/685#issuecomment-341579977
 function gm_fmt(cell, formatterParams, onRendered) {
   const val = cell.getValue();
   if (!val) return;
@@ -56,15 +58,15 @@ function normalize_cast(cast, movie) {
   cast = cast.filter((e) => e.meta.status !== "no_bday");
   cast = cast.map((actor) => {
     actor.meta.filming_age = getAge(actor.birthday, movie.release_date);
-    actor.meta.icon_html = actor_to_icon_html(actor);
+    actor.meta.icon_html = actor_to_icon_html(actor, false);
     return actor;
   });
   return cast;
 }
 
-function actor_to_icon_html(actor) {
+function actor_to_icon_html(actor, small = true) {
   // generate `<img>  </img>` STRING for an actor
-  const img_src = thing_to_img_src(actor, window.tmdb_cfg, true);
+  const img_src = thing_to_img_src(actor, window.tmdb_cfg, small);
   const img_html = `  <a href="/actor/${actor.id}"><img class='infoImage' src="${img_src}"></img></a>`;
   return img_html;
 }

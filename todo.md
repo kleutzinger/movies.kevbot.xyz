@@ -8,3 +8,5 @@
 - [x] I'm feeling lucky button
 - [x] Random movie (id?) button
 - [ ] don't require refresh / communication thru #
+- - [ ] use query strings?
+- - [ ] https://css-tricks.com/separate-form-submit-buttons-go-different-urls/

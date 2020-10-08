@@ -5,32 +5,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.js" integrity="sha256-QTriwEK1XTUJdKp3So7tMDUvZSTLOPpUv8F/J+UwJ8M=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.js"
+    integrity="sha256-QTriwEK1XTUJdKp3So7tMDUvZSTLOPpUv8F/J+UwJ8M=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@0.20.0/dist/axios.min.js"
     integrity="sha256-KyY5SqyBmXeM0zfYBGU1tuqcstxpjkECApypY+CA4Z8=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@4.7.2/dist/js/tabulator.min.js"
     integrity="sha256-MXVVvLTA87/De5G7VXpMOAXUHXEaaj9BroBQTz4cgls=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@4.7.2/dist/css/tabulator.min.css"
     integrity="sha256-ZpikKUhrU7ZxfqKh8PT2V4w9w1sHDokJa/czD+netyM=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"
+    integrity="sha256-ur/YlHMU96MxHEsy3fHGszZHas7NzH4RQlD4tDVvFhw=" crossorigin="anonymous"></script>
   <script src="/tablemaker.js"></script>
   <script src="/client.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+  <link rel="stylesheet" href="/mvp.css">
   <link rel="stylesheet" href="/style.css">
 
 </head>
 
 <body>
   <div class="main">
-    
+
     <!-- <a href="https://www.themoviedb.org/" target=”_blank” rel=”noopener noreferrer”>tmdb movie_id</a> -->
     <div id="search_wrapper">
       <label for="search_input">
-        <input id="search_input" type="text"/> <br />
+        <input id="search_input" type="text" /> <br />
         <button id="search_button_movies">search movies</button>
         <button id="search_button_people">search people</button>
         <button id="search_button_lucky">feeling lucky</button>
       </label>
-    <div id="search_results"> results here</div>
+      <div id="search_results"> results here</div>
     </div>
     <h2 id="movie_name">hi</h2>
     <h2 id="thing_name">thing_name</h2>
