@@ -17,16 +17,15 @@ function populateTable(cast, movie) {
 
 function genColumns() {
   return [
+    //prettier-ignore
+    { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     { title: "Actor", field: "name", frozen: true },
     { title: "Status", field: "meta.status" },
     { title: "Age<br/>today", field: "meta.age" },
     { title: "Age<br/>then", field: "meta.filming_age" },
     { title: "Died<br/>at", field: "meta.died_at" },
     { title: "Popularity", field: "meta.popularity" },
-    { title: "#", field: "order", visible: false },
-
-    //prettier-ignore
-    { title: "Icon", field: "meta.icon_html", hozAlign: "center", formatter: "html" }
+    { title: "#", field: "order", visible: false }
 
     // {
     //   title           : "Time",

@@ -45,7 +45,7 @@ async function init() {
 
   document.addEventListener("keydown", (event) => {
     console.log(`key=${event.key},code=${event.code}`);
-    if (event.key.length === 1) {
+    if (event.key.length === 1 && event.key !== " ") {
       search_input.focus();
     }
   });
@@ -148,7 +148,7 @@ function search_result_transform(thing, cfg) {
   // transform search result objects to HTML
   if (thing.media_type === "movie") {
     // prettier-ignore
-    return `<a onclick="location.hash='${thing.id}';location.reload()">${thing.title} (${thing.release_date.slice(0,4
+    return `<a class="clickable" onclick="location.hash='${thing.id}';location.reload()">${thing.title} (${thing.release_date.slice(0,4
     )})</a>`;
   } else if (thing.media_type === "person") {
     return `<a>${thing.name}</a>`;

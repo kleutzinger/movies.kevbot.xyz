@@ -8,3 +8,12 @@ body {
   /* width: 50px; */
   cursor: pointer;
 }
+
+.search_box {
+  background-color: #cfbfbf;
+  font-size: 40px;
+}
+
+.clickable {
+  cursor: pointer;
+}
