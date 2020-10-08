@@ -20,7 +20,7 @@ function genColumns() {
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     //prettier-ignore
-    { name: "Actor/Role", frozen:true, field: "meta.actor_role", formatter: "html" },
+    { title: "Actor/Role", frozen:true, field: "meta.actor_role", formatter: "html" },
     { title: "Status", field: "meta.status" },
     { title: "Age<br/>today", field: "meta.age" },
     { title: "Age<br/>then", field: "meta.filming_age" },
@@ -68,8 +68,10 @@ function normalize_cast(cast, movie) {
 function actor_to_icon_html(actor, small = true) {
   // generate `<img>  </img>` STRING for an actor
   const img_src = thing_to_img_src(actor, window.tmdb_cfg, small);
-  const img_html = `  <a href="/actor/${actor.id}"><img class='infoImage' src="${img_src}"></img></a>`;
-  return img_html;
+  // const img_html = `  <a href="/actor/${actor.id}"><img class='infoImage' src="${img_src}"></img></a>`;
+  const img_html = `<img class='infoImage' src="${img_src}"></img>`;
+
+  return linkify(img_html, actor.meta.tmdb_link);
 }
 function addDataToSets(sets) {
   return _.map(sets, (set) => {

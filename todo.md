@@ -10,3 +10,6 @@
 - [ ] don't require refresh / communication thru #
 - - [ ] use query strings?
 - - [ ] https://css-tricks.com/separate-form-submit-buttons-go-different-urls/
+- [x] auto search on type
+- [ ] toggle between ppl search and move search
+- [ ] column titled "age in $release_year"
