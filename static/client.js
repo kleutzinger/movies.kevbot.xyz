@@ -1,26 +1,11 @@
-// https://stackoverflow.com/questions/18986895/jquery-ajax-search-debounce
-
-// $("#search_term").on(
-//   "keyup",
-//   _.debounce(function(e) {
-//     $.ajax({
-//       type    : "GET",
-//       url     : "quicksearch.php",
-//       data    : { search_term: $("#search_term").val() },
-//       success : function(msg) {
-//         $("#quick_search_results").html(msg).slideDown();
-//       }
-//     });
-//   }, 300)
-// ); // < try 300 rather than 100
-
-function init() {
+async function init() {
   let start_hash = window.location.hash;
   if (start_hash) {
     start_hash = start_hash.slice(1);
     // document.getElementById("movie_id").value = start_hash;
     set_movie_table(start_hash);
   }
+  window.tmdb_cfg = (await axios.get("/config")).data;
   // document.getElementById("submit").addEventListener("click", async () => {
   //   const value = document.getElementById("movie_id").value;
   //   const movie_id = normalize_input(value);
@@ -31,9 +16,27 @@ function init() {
   // search input and button logic
   const search_button = document.getElementById("search_button");
   const search_input = document.getElementById("search_input");
-  search_button.addEventListener("click", async () => {
-    search_for(search_input.value);
-  });
+  // loc === multi | movie | person
+  document
+    .getElementById("search_button_movies")
+    .addEventListener("click", async () => {
+      search_for(search_input.value, "movie");
+    });
+  document
+    .getElementById("search_button_people")
+    .addEventListener("click", async () => {
+      search_for(search_input.value, "person");
+    });
+  document
+    .getElementById("search_button_lucky")
+    .addEventListener("click", async () => {
+      if (!search_input.value) {
+        while (!await set_movie_table(Math.floor(Math.random() * 10000))) {}
+      } else {
+        return; // set to first search result
+        search_for(set_movie_table, search_input.value);
+      }
+    });
   search_input.onkeydown = function(e) {
     if (e.key == "Enter") {
       search_for(search_input.value);
@@ -41,42 +44,80 @@ function init() {
   };
 }
 
-async function set_movie_table(movie_id) {
-  const endpoint = "/movie/" + movie_id;
-  console.log("getting " + endpoint);
-  const resp = await axios.get(endpoint);
-  console.log(resp.data.movie.title);
-  const { movie, cast } = resp.data;
-  const years_ago = -moment(movie.release_date).diff(Date.now(), "years");
-  //prettier-ignore
-  let title_str = `${movie.title} (${movie.release_date}) ${years_ago} years ago`;
-  document.getElementById("movie_name").innerHTML = title_str;
-  console.log(movie);
-  console.log(cast);
-  set_hash(movie.id);
-  populateTable(cast, movie);
+function create_element(htmlString) {
+  var div = document.createElement("div");
+  div.innerHTML = htmlString.trim();
+  // Change this to div.childNodes to support multiple top-level nodes
+  return div.firstElementChild;
 }
 
-async function search_for(query, page = 1) {
+async function set_movie_table(movie_id) {
+  try {
+    const endpoint = "/movie/" + movie_id;
+    console.log("getting " + endpoint);
+    const resp = await axios.get(endpoint);
+    console.log(resp.data.movie.title);
+    const { movie, cast } = resp.data;
+    const years_ago = -moment(movie.release_date).diff(Date.now(), "years");
+    //prettier-ignore
+    let title_str = `${movie.title} (${movie.release_date}) ${years_ago} years ago`;
+    title_str = linkify(
+      title_str,
+      `https://www.themoviedb.org/movie/${movie.id}`
+    );
+    document.getElementById("movie_name").innerHTML = title_str;
+    console.log("movie, ", movie);
+    console.log("cast, ", cast);
+    set_hash(movie.id);
+    populateTable(cast, movie);
+    console.trace("madit");
+    return true;
+  } catch (error) {
+    console.log("no response");
+    return false;
+  }
+}
+
+async function search_for(query, loc = "movie", page = 1) {
   const endpoint = "/search/";
   console.log("searching for: " + query);
-  const resp = await axios.post(endpoint, { loc: "multi", query, page });
+  const resp = await axios.post(endpoint, { loc, query, page });
   const rows = resp.data.results;
+  const cfg = (await axios.get("/config")).data;
   console.log(rows);
-  on_search_results(rows);
+  on_search_results(rows, cfg);
 }
 
-function on_search_results(rows) {
+function on_search_results(rows, cfg) {
   ul = document.createElement("ul");
-  document.getElementById("search_results").appendChild(ul);
+  const search_results_node = document.getElementById("search_results");
+  search_results_node.innerHTML = "";
+  search_results_node.appendChild(ul);
   rows.forEach(function(item) {
     let li = document.createElement("li");
     ul.appendChild(li);
-    li.innerHTML += result_transform(item);
+    li.innerHTML += search_result_transform(item, cfg);
   });
 }
 
-function result_transform(thing) {
+function thing_to_img_src(thing, cfg, is_icon = true) {
+  const img_base = cfg.images.secure_base_url;
+  const { media_type } = thing;
+  let path, size;
+  if (thing.poster_path) {
+    path = thing.poster_path;
+    size = cfg.images.poster_sizes[0];
+    if (!is_icon) size = "original";
+  } else if (thing.profile_path) {
+    path = thing.profile_path;
+    size = cfg.images.profile_sizes[0];
+    if (!is_icon) size = "original";
+  }
+  if (size) return [ img_base, size, path ].join("");
+  else return "";
+}
+
+function search_result_transform(thing, cfg) {
   // transform search result objects to HTML
   if (thing.media_type === "movie") {
     // prettier-ignore
@@ -131,4 +172,26 @@ function makeTable() {
   );
 }
 
+function linkify(str, href) {
+  // surround: <a $href> $str </a>
+  // https://www.themoviedb.org/movie/${movie.id}
+  return `<a href="${href}" target=”_blank” rel=”noopener noreferrer”>${str}</a>`;
+}
+
 document.addEventListener("DOMContentLoaded", init);
+
+// https://stackoverflow.com/questions/18986895/jquery-ajax-search-debounce
+
+// $("#search_term").on(
+//   "keyup",
+//   _.debounce(function(e) {
+//     $.ajax({
+//       type    : "GET",
+//       url     : "quicksearch.php",
+//       data    : { search_term: $("#search_term").val() },
+//       success : function(msg) {
+//         $("#quick_search_results").html(msg).slideDown();
+//       }
+//     });
+//   }, 300)
+// ); // < try 300 rather than 100

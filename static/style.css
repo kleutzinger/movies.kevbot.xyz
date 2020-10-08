@@ -1,3 +1,10 @@
 body {
   margin: 10px;
 }
+
+.infoImage {
+  display: inline-block;
+  height: 120px;
+  /* width: 50px; */
+  cursor: pointer;
+}

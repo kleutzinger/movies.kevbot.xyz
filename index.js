@@ -73,9 +73,10 @@ app.get("/movie/:id", async function(req, res, next) {
         // }
         const actors = validResults.map((e) => e.value);
         // prettier-ignore
-        const gimme = (actor) => _.pick(actor, ["id", "name", "birthday", "meta"]);
+        const gimme = (actor) => _.pick(actor, ["profile_path","id", "name", "birthday", "meta"]);
         const cast_summary = _.sortBy(_.map(actors, gimme), [
-          // (p) => -p.meta.popularity,
+          // 0, //don't sort
+          (p) => -p.meta.popularity,
           "meta.status",
           (a) => -a.meta.age // sort by oldest alive first
         ]);
@@ -103,13 +104,31 @@ app.get("/actor/:id", async function(req, res, next) {
   }
 });
 
+app.get("/config", async function(req, res, next) {
+  try {
+    const cfg = await get_tmdb_config();
+    res.json(cfg);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.post("/search", async function(req, res, next) {
   try {
+    // loc === multi | movie | person
     // https://api.themoviedb.org/3/search/multi?api_key=<<api_key>>&language=en-US&page=1&include_adult=false
     const loc = req.body.loc;
     const query = req.body.query;
     console.log({ loc, query });
     const resp = await search_tmdb(query, loc);
+    console.log(resp);
+    if (loc !== "multi") {
+      resp.results = resp.results.map((e) => {
+        e.media_type = loc;
+        return e;
+      });
+    }
+
     res.json(resp);
   } catch (error) {
     next(error);
@@ -130,8 +149,12 @@ async function search_tmdb(query, loc = "multi", page = 1) {
   }
 }
 
-async function get_tmdb(id, loc = "actor") {
-  // loc = actor | movie
+async function get_tmdb_config() {
+  return await get_tmdb("", "config", 3600 * 24 * 2);
+}
+
+async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
+  // loc = actor | movie | config
   // TODO | config
   // get actor value from cache or api
   let cache_key, endpoint, extra_params, thing;
@@ -143,8 +166,11 @@ async function get_tmdb(id, loc = "actor") {
     cache_key = "/movie/" + id;
     endpoint = "https://api.themoviedb.org/3/movie/" + id;
     extra_params = { append_to_response: "credits" };
+  } else if (loc === "config") {
+    cache_key = "/config/";
+    endpoint = "https://api.themoviedb.org/3/configuration";
   } else {
-    throw "loc not equal actor | movie";
+    throw "loc not equal actor | movie | config";
   }
   // check cache
   const cached = await client.get(cache_key);
@@ -160,7 +186,7 @@ async function get_tmdb(id, loc = "actor") {
       thing = resp.data;
       // prettier-ignore
       if (loc == "actor") {thing = _.omit(thing, [ "credits", "biography", "also_known_as" ]);}
-      client.setex(cache_key, 3600 * 24, JSON.stringify(thing));
+      client.setex(cache_key, cache_expiry, JSON.stringify(thing));
       thing.cache_miss = true;
     }
   }
