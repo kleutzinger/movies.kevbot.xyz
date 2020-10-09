@@ -24,6 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.set('view engine', 'pug');
 var cors = require("cors");
 app.use(cors());
+app.use(
+  require("serve-favicon")(path.join(__dirname, "static", "img", "favicon.ico"))
+);
 app.use(morgan("tiny"));
 
 const server = app.listen(PORT, () => {
@@ -119,9 +122,8 @@ app.post("/search", async function(req, res, next) {
     // https://api.themoviedb.org/3/search/multi?api_key=<<api_key>>&language=en-US&page=1&include_adult=false
     const loc = req.body.loc;
     const query = req.body.query;
-    console.log({ loc, query });
+    console.log("search: ", { loc, query });
     const resp = await search_tmdb(query, loc);
-    console.log(resp);
     if (loc !== "multi") {
       resp.results = resp.results.map((e) => {
         e.media_type = loc;

@@ -12,7 +12,8 @@
     "lodash": "^4.17.20",
     "morgan": "^1.10.0",
     "promise-redis": "0.0.5",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "serve-favicon": "^2.5.0"
   },
   "scripts": {
     "start": "node index.js",

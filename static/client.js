@@ -12,9 +12,11 @@ async function init() {
   //   if (movie_id === -1) return;
   //   set_movie_table(movie_id);
   // });
+  events_setup();
+}
 
+function events_setup() {
   // search input and button logic
-  const search_button = document.getElementById("search_button");
   const search_input = document.getElementById("search_input");
   // loc === multi | movie | person
   document

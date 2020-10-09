@@ -13,3 +13,5 @@
 - [x] auto search on type
 - [ ] toggle between ppl search and move search
 - [ ] column titled "age in $release_year"
+- [ ] fix table greyspace
+- [ ]
