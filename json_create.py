@@ -25,7 +25,7 @@ new_columns = ["imdb_id", "birth_year", "death_year"]
 tsv_file = "name.basics.tsv"
 output_file = "imdb_years.json"
 year_table = dict()
-with open(tsv_file, "r") as csvfile:
+with open(tsv_file, "r", encoding="ISO-8859-1") as csvfile:
     datareader = csv.reader(csvfile, delimiter="\t")
     lengths = collections.Counter()
     for (idx, row) in enumerate(datareader):

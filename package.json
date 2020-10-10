@@ -23,6 +23,10 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "nodemonConfig": {
+    "ignore": [ "imdb_years.json" ]
+  },
+
   "author": "Kevin Leutzinger",
   "license": "ISC",
   "engines": {
