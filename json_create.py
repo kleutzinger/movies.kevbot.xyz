@@ -7,11 +7,11 @@ NOYEAR = "\\N"
 
 DL_LINK = "https://datasets.imdbws.com/name.basics.tsv.gz"
 
-print("wget name.basics.tsv.gz csv")
+print("wget -q name.basics.tsv.gz csv")
 os.system("wget " + DL_LINK)
 
 print("extract gz")
-os.system("gzip -d -v name.basics.tsv.gz")
+os.system("gzip -d name.basics.tsv.gz")
 
 
 def normalize_year(yr):

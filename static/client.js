@@ -5,6 +5,9 @@ async function init() {
     // document.getElementById("movie_id").value = start_hash;
     set_movie_table(start_hash);
   }
+  if (window.location.href.includes("localhost:")) {
+    document.body.style.backgroundColor = "#e5e5aa";
+  }
   window.tmdb_cfg = (await axios.get("/config")).data;
   // document.getElementById("submit").addEventListener("click", async () => {
   //   const value = document.getElementById("movie_id").value;
@@ -12,6 +15,7 @@ async function init() {
   //   if (movie_id === -1) return;
   //   set_movie_table(movie_id);
   // });
+
   events_setup();
 }
 

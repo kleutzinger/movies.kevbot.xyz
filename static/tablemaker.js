@@ -26,6 +26,9 @@ function genColumns() {
     { title: "Age<br/>then", field: "meta.filming_age" },
     { title: "Died<br/>at", field: "meta.died_at" },
     { title: "Popularity", field: "meta.popularity" },
+    { field: "meta.imdb_b" },
+    { field: "meta.imdb_d" },
+
     { title: "#", field: "order", visible: false }
 
     // {
