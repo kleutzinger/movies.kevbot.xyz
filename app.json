@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "cd /app && python3 csv_create.py"
+    }
+  }
+}

@@ -14,4 +14,5 @@
 - [ ] toggle between ppl search and move search
 - [ ] column titled "age in $release_year"
 - [ ] fix table greyspace
-- [ ]
+- [ ] star sign (optional?)
+- [ ] actor.meta.imdb_b_year / d_year

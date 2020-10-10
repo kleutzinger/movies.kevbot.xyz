@@ -94,6 +94,7 @@ async function set_movie_table(movie_id) {
 function movie_onto_cast(movie, cast) {
   // push some info from the `movie` obj onto the cast
   // credits ordering... credits.cast[0].id
+  // character name
   // this'll be n^2 but whatever
   // returns modified cast
   cast.forEach((actor, idx, arr) => {

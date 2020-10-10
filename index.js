@@ -1,5 +1,15 @@
 const dotenv = require("dotenv");
 dotenv.config();
+
+// don't load table on local development
+let imdb_years = {};
+try {
+  imdb_years = require("./imdb_years.json");
+} catch (error) {
+  console.log(error);
+  console.log("please run `python3 json_create.py`");
+  console.log("starting with imdb_years = {}");
+}
 const TMDB_KEY = process.env.TMDB_KEY;
 if (!process.env.BASE_URL) {
   process.env.BASE_URL = "http://actors.kevbot.xyz";
@@ -200,6 +210,8 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
 
 function actor_meta(actor) {
   let status, age, died_at, imdb_link, tmdb_link;
+  const imdb_b = _.get(imdb_years, `${actor.imdb_id}.b`);
+  const imdb_d = _.get(imdb_years, `${actor.imdb_id}.d`);
 
   if (!actor.birthday) {
     status = "no_bday";
@@ -222,7 +234,9 @@ function actor_meta(actor) {
     died_at,
     imdb_link,
     tmdb_link,
-    popularity : actor.popularity
+    popularity : actor.popularity,
+    imdb_b,
+    imdb_d
   };
 }
 
