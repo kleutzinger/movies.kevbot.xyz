@@ -142,12 +142,13 @@ function thing_to_img_src(thing, cfg, is_icon = true) {
   const img_base = cfg.images.secure_base_url;
   const { media_type } = thing;
   let path, size;
-  if (thing.poster_path) {
+  if ("poster_path" in thing) {
     path = thing.poster_path;
     size = cfg.images.poster_sizes[0];
     if (!is_icon) size = "original";
-  } else if (thing.profile_path) {
+  } else if ("profile_path" in thing) {
     path = thing.profile_path;
+    if (!path) return "/img/no_pic.svg";
     size = cfg.images.profile_sizes[0];
     if (!is_icon) size = "original";
   }

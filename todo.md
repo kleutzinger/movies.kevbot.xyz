@@ -16,7 +16,7 @@
 - [ ] fix table greyspace
 - [x] star sign (optional?)
 - [x] actor.meta.imdb_b / imdb_d
-
+- [x] add default blacked out image
 ## Design:
 - [x] handle no birthday
 - Use imdb_d to set death day (appx death dates not be notated)
