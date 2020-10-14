@@ -19,8 +19,11 @@ const BASE_URL = process.env.BASE_URL;
 const client = require("./db.js");
 const express = require("express");
 const axios = require("axios");
+const Zodiac = require("zodiac-signs")("en");
+
 const PORT = process.env.PORT || 5000;
 const INTERNAL_URL = `http://localhost:${PORT}`;
+
 const app = express();
 const _ = require("lodash");
 const bodyParser = require("body-parser");
@@ -86,12 +89,12 @@ app.get("/movie/:id", async function(req, res, next) {
         // }
         const actors = validResults.map((e) => e.value);
         // prettier-ignore
-        const gimme = (actor) => _.pick(actor, ["profile_path","id", "name", "birthday", "meta"]);
+        const gimme = (actor) => _.pick(actor, ["profile_path","id", "name", "birthday", "meta", "approximate_birthday"]);
         const cast_summary = _.sortBy(_.map(actors, gimme), [
           // 0, //don't sort
           (p) => -p.meta.popularity,
           "meta.status",
-          (a) => -a.meta.age // sort by oldest alive first
+          (a) => -a.meta.age, // sort by oldest alive first
         ]);
         res.json({ cast: cast_summary, movie: resp });
       })
@@ -149,11 +152,12 @@ app.post("/search", async function(req, res, next) {
 
 async function search_tmdb(query, loc = "multi", page = 1) {
   // loc === multi | movie | person
-  if (![ "multi", "movie", "person" ].includes(loc)) throw "bad loc";
+  if (![ "multi", "movie", "person" ].includes(loc))
+    throw new Error("bad loc " + loc);
   let endpoint = "https://api.themoviedb.org/3/search/" + loc + "/";
   let extra_params = { query, adult: "false", page };
   const resp = await axios.get(endpoint, {
-    params : _.assign(default_params, extra_params)
+    params : _.assign(default_params, extra_params),
   });
   if (resp.status === 200 && !_.isEmpty(resp.data)) {
     const results = resp.data;
@@ -182,7 +186,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
     cache_key = "/config/";
     endpoint = "https://api.themoviedb.org/3/configuration";
   } else {
-    throw "loc not equal actor | movie | config";
+    throw new Error("loc not equal actor | movie | config");
   }
   // check cache
   const cached = await client.get(cache_key);
@@ -192,7 +196,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
     console.log("askd tmbd api " + cache_key);
     // console.log(_.assign(default_params, extra_params));
     const resp = await axios.get(endpoint, {
-      params : _.assign(default_params, extra_params)
+      params : _.assign(default_params, extra_params),
     });
     if (resp.status === 200 && !_.isEmpty(resp.data)) {
       thing = resp.data;
@@ -202,16 +206,33 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
       thing.cache_miss = true;
     }
   }
+  // cached or not, add metadata
   if (loc === "actor") {
+    thing = actor_backup_data(thing);
     thing.meta = actor_meta(thing);
   }
   return thing;
 }
 
+function actor_backup_data(actor) {
+  const imdb_b = _.get(imdb_years, `${actor.imdb_id}.b`, null);
+  const imdb_d = _.get(imdb_years, `${actor.imdb_id}.d`, null);
+  if (!actor.deathday && imdb_d) {
+    // set deathday to jan 1 $YEAR
+    actor.deathday = imdb_d + "-01-01";
+  }
+  if (!actor.birthday && imdb_b) {
+    // set birthday to jan 1 $YEAR
+    actor.birthday = imdb_b + "-01-01";
+    actor.approximate_birthday = true;
+  }
+  return actor;
+}
+
 function actor_meta(actor) {
-  let status, age, died_at, imdb_link, tmdb_link;
-  const imdb_b = _.get(imdb_years, `${actor.imdb_id}.b`);
-  const imdb_d = _.get(imdb_years, `${actor.imdb_id}.d`);
+  let status, age, died_at, imdb_link, tmdb_link, zodiac;
+  const imdb_b = _.get(imdb_years, `${actor.imdb_id}.b`, null);
+  const imdb_d = _.get(imdb_years, `${actor.imdb_id}.d`, null);
 
   if (!actor.birthday) {
     status = "no_bday";
@@ -220,13 +241,18 @@ function actor_meta(actor) {
     died_at = getAge(Date.parse(actor.birthday), new Date(actor.deathday));
     age = getAge(Date.parse(actor.birthday), new Date());
   } else {
-    status = "alive";
+    status = actor.approximate_birthday ? "unknown" : "alive";
     age = getAge(new Date(actor.birthday), new Date());
   }
   if (actor.imdb_id) {
     imdb_link = "https://www.imdb.com/name/" + actor.imdb_id;
   }
   tmdb_link = "https://www.themoviedb.org/person/" + actor.id;
+  if (actor.birthday && !actor.approximate_birthday) {
+    const [ byear, bmonth, bday ] = actor.birthday.split("-");
+    zodiac = Zodiac.getSignByDate({ day: bday, month: bmonth });
+    zodiac = _.pick(zodiac, [ "name", "symbol" ]);
+  }
 
   return {
     status,
@@ -236,7 +262,8 @@ function actor_meta(actor) {
     tmdb_link,
     popularity : actor.popularity,
     imdb_b,
-    imdb_d
+    imdb_d,
+    zodiac,
   };
 }
 

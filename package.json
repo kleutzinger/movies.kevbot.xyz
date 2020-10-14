@@ -16,7 +16,8 @@
     "object-sizeof": "^1.6.1",
     "promise-redis": "0.0.5",
     "redis": "^3.0.2",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "zodiac-signs": "^1.0.2"
   },
   "scripts": {
     "start": "node index.js",
@@ -24,9 +25,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "nodemonConfig": {
-    "ignore": [ "imdb_years.json" ]
+    "ignore": [
+      "imdb_years.json"
+    ]
   },
-
   "author": "Kevin Leutzinger",
   "license": "ISC",
   "engines": {

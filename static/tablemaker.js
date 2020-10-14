@@ -9,8 +9,8 @@ function populateTable(cast, movie) {
     // layout      : 'fitColumns',
     initialSort   : [
       // set the initial sort order of the data
-      { column: "order", dir: "asc" }
-    ]
+      { column: "order", dir: "asc" },
+    ],
   });
 }
 // const cfg = (await axios.get("/config")).data;
@@ -26,10 +26,11 @@ function genColumns() {
     { title: "Age<br/>then", field: "meta.filming_age" },
     { title: "Died<br/>at", field: "meta.died_at" },
     { title: "Popularity", field: "meta.popularity" },
-    { field: "meta.imdb_b" },
-    { field: "meta.imdb_d" },
+    // { field: "meta.imdb_b" },
+    // { field: "meta.imdb_d" },
+    { title: "Zodiac", field: "meta.zodiac_html", formatter: "html" },
 
-    { title: "#", field: "order", visible: false }
+    { title: "#", field: "order", visible: false },
 
     // {
     //   title           : "Time",
@@ -62,7 +63,18 @@ function normalize_cast(cast, movie) {
   cast = cast.map((actor) => {
     actor.meta.filming_age = getAge(actor.birthday, movie.release_date);
     actor.meta.icon_html = actor_to_icon_html(actor, false);
-    actor.meta.actor_role = `<div>${actor.name}</br>(${actor.character})</div>`;
+    actor.meta.actor_role = `
+      <div>
+      <strong>${actor.name}</strong></br>
+      ${actor.character}</br>
+      ${actor.approximate_birthday ? actor.meta.imdb_b : actor.birthday}
+      </div>`;
+    actor.meta.zodiac_html = `
+      ${_.get(actor, "meta.zodiac.symbol", "")}
+      ${_.get(actor, "meta.zodiac.name", "")}
+    `;
+    console.log(actor.name, actor.approximate_birthday);
+
     return actor;
   });
   return cast;

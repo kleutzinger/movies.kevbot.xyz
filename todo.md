@@ -14,5 +14,10 @@
 - [ ] toggle between ppl search and move search
 - [ ] column titled "age in $release_year"
 - [ ] fix table greyspace
-- [ ] star sign (optional?)
-- [ ] actor.meta.imdb_b_year / d_year
+- [x] star sign (optional?)
+- [x] actor.meta.imdb_b / imdb_d
+
+## Design:
+- [x] handle no birthday
+- Use imdb_d to set death day (appx death dates not be notated)
+- setting birthday to birth year, overwrite and set actor.approx = true
