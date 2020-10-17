@@ -1,13 +1,13 @@
 function populateTable(cast, movie) {
   cast = normalize_cast(cast, movie);
   var table = new Tabulator("#tabulator", {
-    data          : cast, //assign data to table
+    data: cast, //assign data to table
     // prettier-ignore
     columns: genColumns(),
-    cellVertAlign : "middle",
-    layout        : "fitData",
+    cellVertAlign: "middle",
+    layout: "fitData",
     // layout      : 'fitColumns',
-    initialSort   : [
+    initialSort: [
       // set the initial sort order of the data
       { column: "order", dir: "asc" },
     ],
@@ -73,7 +73,6 @@ function normalize_cast(cast, movie) {
       ${_.get(actor, "meta.zodiac.symbol", "")}
       ${_.get(actor, "meta.zodiac.name", "")}
     `;
-    console.log(actor.name, actor.approximate_birthday);
 
     return actor;
   });
@@ -107,6 +106,10 @@ function addDataToSets(sets) {
 function getAge(start, until = new Date()) {
   var birthDate = new Date(start);
   var until = new Date(until);
+
+
+
+
   var age = until.getFullYear() - birthDate.getFullYear();
   var m = until.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && until.getDate() < birthDate.getDate())) {

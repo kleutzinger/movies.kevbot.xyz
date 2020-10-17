@@ -1,20 +1,11 @@
 async function init() {
-  let start_hash = window.location.hash;
-  if (start_hash) {
-    start_hash = start_hash.slice(1);
-    // document.getElementById("movie_id").value = start_hash;
-    set_movie_table(start_hash);
-  }
+  let query = new URLSearchParams(window.location.search);
+  let movie_id = query.get("m");
+  if (movie_id) set_movie_table(movie_id);
   if (window.location.href.includes("localhost:")) {
     document.body.style.backgroundColor = "#e5e5aa";
   }
   window.tmdb_cfg = (await axios.get("/config")).data;
-  // document.getElementById("submit").addEventListener("click", async () => {
-  //   const value = document.getElementById("movie_id").value;
-  //   const movie_id = normalize_input(value);
-  //   if (movie_id === -1) return;
-  //   set_movie_table(movie_id);
-  // });
 
   events_setup();
 }
@@ -67,10 +58,10 @@ function create_element(htmlString) {
   return div.firstElementChild;
 }
 
-async function set_movie_table(movie_id) {
+async function set_movie_table(movie_id, write_url_query = true) {
   try {
     const endpoint = "/movie/" + movie_id;
-    console.log("getting " + endpoint);
+    console.log(`getting ${endpoint} from server`);
     const resp = await axios.get(endpoint);
     console.log(resp.data.movie.title);
     let { movie, cast } = resp.data;
@@ -83,11 +74,19 @@ async function set_movie_table(movie_id) {
       `https://www.themoviedb.org/movie/${movie.id}`
     );
     document.getElementById("movie_name").innerHTML = title_str;
+    
     console.log("movie, ", movie);
-    console.log("cast, ", cast);
-    set_hash(movie.id);
+    console.table(cast);
+    // set_hash(movie.id);
+    // window.location.search = `m=${movie_id}`;
+    if ("URLSearchParams" in window && write_url_query) {
+      var searchParams = new URLSearchParams(window.location.search);
+      searchParams.set("m", movie_id);
+      var newRelativePathQuery =
+        window.location.pathname + "?" + searchParams.toString();
+      history.pushState(null, "", newRelativePathQuery);
+    }
     populateTable(cast, movie);
-    console.trace("madit");
     return true;
   } catch (error) {
     console.log("no response ", error);
@@ -110,7 +109,6 @@ function movie_onto_cast(movie, cast) {
     }
     arr[idx].character = character || "";
   });
-  console.log(cast);
   return cast;
 }
 
@@ -122,7 +120,6 @@ async function search_for(query, loc = "movie", page = 1) {
   const resp = await axios.post(endpoint, { loc, query, page });
   const rows = resp.data.results;
   const cfg = (await axios.get("/config")).data;
-  console.log(rows);
   on_search_results(rows, cfg);
 }
 
@@ -160,7 +157,7 @@ function search_result_transform(thing, cfg) {
   // transform search result objects to HTML
   if (thing.media_type === "movie") {
     // prettier-ignore
-    return `<a class="clickable" onclick="location.hash='${thing.id}';location.reload()">${thing.title} (${thing.release_date.slice(0,4
+    return `<a href="/?m=${thing.id}">${thing.title} (${thing.release_date.slice(0,4
     )})</a>`;
   } else if (thing.media_type === "person") {
     return `<a>${thing.name}</a>`;
