@@ -2,7 +2,7 @@ function populateTable(cast, movie) {
   cast = normalize_cast(cast, movie);
   var table = new Tabulator("#tabulator", {
     data: cast, //assign data to table
-    // prettier-ignore
+    resizableColumns: "header",
     columns: genColumns(movie),
     columnMinWidth: 1,
     cellVertAlign: "middle",
