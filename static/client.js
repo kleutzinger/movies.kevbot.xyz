@@ -26,11 +26,8 @@ function events_setup() {
   document
     .getElementById("search_button_lucky")
     .addEventListener("click", async () => {
-      if (!search_input.value) {
-        while (!(await set_movie_table(Math.floor(Math.random() * 10000)))) {}
-      } else {
-        return; // set to first search result
-        search_for(set_movie_table, search_input.value);
+      while (!(await set_movie_table(Math.floor(Math.random() * 10000)))) {
+        // empty while
       }
     });
   // search_input.onkeydown = function(e) {
@@ -81,7 +78,6 @@ async function set_movie_table(movie_id, write_url_query = true) {
 
     console.log("movie, ", movie);
     console.table(cast);
-    // set_hash(movie.id);
     // window.location.search = `m=${movie_id}`;
     if ("URLSearchParams" in window && write_url_query) {
       var searchParams = new URLSearchParams(window.location.search);
@@ -170,20 +166,6 @@ function search_result_transform(thing, cfg) {
     return `<a>${thing.name}</a>`;
   } else {
     return `<a>${thing.name} (tv shows unsupported)</a>`;
-  }
-}
-
-function set_and_go() {
-  // to set id
-}
-
-function random_button() {}
-
-function set_hash(hash) {
-  if (history.pushState) {
-    history.pushState(null, null, "#" + hash);
-  } else {
-    location.hash = "#" + hash;
   }
 }
 

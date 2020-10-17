@@ -4,8 +4,9 @@ function populateTable(cast, movie) {
     data: cast, //assign data to table
     // prettier-ignore
     columns: genColumns(),
+    columnMinWidth: 1,
     cellVertAlign: "middle",
-    layout: "fitData",
+    // layout: "fitData",
     // layout      : 'fitColumns',
     initialSort: [
       // set the initial sort order of the data
@@ -20,7 +21,7 @@ function genColumns() {
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     //prettier-ignore
-    { title: "Actor/Role", frozen:true, field: "meta.actor_role", formatter: "html" },
+    { title: "Actor/Role", frozen:false, field: "meta.actor_role", formatter: "html", width:150 },
     { title: "Status", field: "meta.status" },
     { title: "Age<br/>today", field: "meta.age" },
     { title: "Age<br/>then", field: "meta.filming_age" },
@@ -59,7 +60,7 @@ function gm_fmt(cell, formatterParams, onRendered) {
 }
 
 function normalize_cast(cast, movie) {
-  cast = cast.filter((e) => e.meta.status !== "no_bday");
+  // cast = cast.filter((e) => e.meta.status !== "no_bday");
   cast = cast.map((actor) => {
     actor.meta.filming_age = getAge(actor.birthday, movie.release_date);
     actor.meta.icon_html = actor_to_icon_html(actor, false);
@@ -106,9 +107,6 @@ function addDataToSets(sets) {
 function getAge(start, until = new Date()) {
   var birthDate = new Date(start);
   var until = new Date(until);
-
-
-
 
   var age = until.getFullYear() - birthDate.getFullYear();
   var m = until.getMonth() - birthDate.getMonth();

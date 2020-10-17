@@ -246,7 +246,7 @@ function actor_meta(actor) {
     died_at = getAge(Date.parse(actor.birthday), new Date(actor.deathday));
     age = getAge(Date.parse(actor.birthday), new Date());
   } else {
-    status = actor.approximate_birthday ? "unknown" : "alive";
+    status = actor.approximate_birthday ? "?" : "alive";
     age = getAge(new Date(actor.birthday), new Date());
   }
   if (actor.imdb_id) {
