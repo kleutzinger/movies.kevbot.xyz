@@ -14,34 +14,33 @@ function events_setup() {
   // search input and button logic
   const search_input = document.getElementById("search_input");
   // loc === multi | movie | person
-  document
-    .getElementById("search_button_movies")
-    .addEventListener("click", async () => {
-      search_for(search_input.value, "movie");
-    });
-  document
-    .getElementById("search_button_people")
-    .addEventListener("click", async () => {
-      search_for(search_input.value, "person");
-    });
+  const search_toggle = document.getElementById("search_toggle");
+  search_toggle.addEventListener("change", function () {
+    onSearchKeyUp();
+    if (this.checked) {
+      // Checkbox is checked..
+    } else {
+      // Checkbox is not checked..
+    }
+  });
   document
     .getElementById("search_button_lucky")
     .addEventListener("click", async () => {
       if (!search_input.value) {
-        while (!await set_movie_table(Math.floor(Math.random() * 10000))) {}
+        while (!(await set_movie_table(Math.floor(Math.random() * 10000)))) {}
       } else {
         return; // set to first search result
         search_for(set_movie_table, search_input.value);
       }
     });
-  search_input.onkeydown = function(e) {
-    if (e.key == "Enter") {
-      search_for(search_input.value);
-    }
-  };
+  // search_input.onkeydown = function(e) {
+  //   if (e.key == "Enter") {
+  //     search_for(search_input.value);
+  //   }
+  // };
   search_input.onkeyup = _.debounce(() => {
     onSearchKeyUp();
-  }, 500);
+  }, 250);
 
   document.addEventListener("keydown", (event) => {
     // console.log(`key=${event.key},code=${event.code}`);
@@ -49,6 +48,11 @@ function events_setup() {
       search_input.focus();
     }
   });
+
+  // prettier-ignore
+  window.onpopstate = function (event) {
+    // alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
+  };
 }
 
 function create_element(htmlString) {
@@ -74,7 +78,7 @@ async function set_movie_table(movie_id, write_url_query = true) {
       `https://www.themoviedb.org/movie/${movie.id}`
     );
     document.getElementById("movie_name").innerHTML = title_str;
-    
+
     console.log("movie, ", movie);
     console.table(cast);
     // set_hash(movie.id);
@@ -113,9 +117,12 @@ function movie_onto_cast(movie, cast) {
 }
 
 async function search_for(query, loc = "movie", page = 1) {
+  // loc === multi | movie | person
   const endpoint = "/search/";
   console.log("searching for: " + query);
-  document.getElementById("search_results").innerHTML = "<p>Loading...</p>";
+  document.getElementById(
+    "search_results"
+  ).innerHTML = `<p>loading search...</p>`;
 
   const resp = await axios.post(endpoint, { loc, query, page });
   const rows = resp.data.results;
@@ -128,7 +135,7 @@ function on_search_results(rows, cfg) {
   const search_results_node = document.getElementById("search_results");
   search_results_node.innerHTML = "";
   search_results_node.appendChild(ul);
-  rows.forEach(function(item) {
+  rows.forEach(function (item) {
     let li = document.createElement("li");
     ul.appendChild(li);
     li.innerHTML += search_result_transform(item, cfg);
@@ -149,7 +156,7 @@ function thing_to_img_src(thing, cfg, is_icon = true) {
     size = cfg.images.profile_sizes[0];
     if (!is_icon) size = "original";
   }
-  if (size) return [ img_base, size, path ].join("");
+  if (size) return [img_base, size, path].join("");
   else return "";
 }
 
@@ -200,12 +207,9 @@ function normalize_input(str) {
 }
 
 function makeTable() {
-  var table = new Tabulator(
-    "#tabulator",
-    {
-      //table setup options
-    }
-  );
+  var table = new Tabulator("#tabulator", {
+    //table setup options
+  });
 }
 
 function linkify(str, href) {
@@ -220,7 +224,10 @@ document.addEventListener("DOMContentLoaded", init);
 
 function onSearchKeyUp() {
   const search_val = document.getElementById("search_input").value;
-  search_for(search_val, "movie");
+  const loc = document.getElementById("search_toggle").checked
+    ? "person"
+    : "movie";
+  search_for(search_val, loc);
 }
 
 // $("#search_term").on(

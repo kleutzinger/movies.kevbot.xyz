@@ -14,11 +14,16 @@
 - [x] auto search on type
 - [ ] toggle between ppl search and move search
 - [ ] column titled "age in \$release_year"
-- [ ] fix table greyspace
+- [x] fix table greyspace
+- - set .tabulator css to `max-width: min-content;`
+- [ ] fix max character name width
 - [x] star sign (optional?)
+- - used `require("zodiac-signs")("en");`
 - [x] actor.meta.imdb_b / imdb_d
 - [x] add default blacked out image
 - [ ] include people with no_bday
+- [ ] server-side random movie-getting
+- [ ] current age/year died
 
 ## Design:
 

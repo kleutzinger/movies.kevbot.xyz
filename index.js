@@ -64,7 +64,11 @@ app.get("/gojira", (req, res) => {
   app.handle(req, res);
 });
 
-app.get("/movie/:id", async function(req, res, next) {
+app.get("/random_movie", async function (req, res, next) {
+  res.json({ message: "todo" });
+});
+
+app.get("/movie/:id", async function (req, res, next) {
   try {
     const resp = await get_tmdb(req.params.id, "movie");
     const cast_ids = _.get(resp, "credits.cast").map((e) => e.id);
@@ -80,7 +84,7 @@ app.get("/movie/:id", async function(req, res, next) {
     Promise.allSettled(promises)
       .then((results) => {
         // results.map((e) => console.log(e.status));
-        const [ validResults, badResults ] = _.partition(
+        const [validResults, badResults] = _.partition(
           results,
           (e) => e.status === "fulfilled"
         );
@@ -111,7 +115,7 @@ app.get("/movie/:id", async function(req, res, next) {
 // app.get("/alives/:movie_id")
 // TODO age in film
 
-app.get("/actor/:id", async function(req, res, next) {
+app.get("/actor/:id", async function (req, res, next) {
   try {
     const actor = await get_tmdb(req.params.id, "actor");
     res.json(actor);
@@ -120,7 +124,7 @@ app.get("/actor/:id", async function(req, res, next) {
   }
 });
 
-app.get("/config", async function(req, res, next) {
+app.get("/config", async function (req, res, next) {
   try {
     const cfg = await get_tmdb_config();
     res.json(cfg);
@@ -129,11 +133,12 @@ app.get("/config", async function(req, res, next) {
   }
 });
 
-app.post("/search", async function(req, res, next) {
+app.post("/search", async function (req, res, next) {
   try {
-    // loc === multi | movie | person
+    // loc === multi | movie | person | people
     // https://api.themoviedb.org/3/search/multi?api_key=<<api_key>>&language=en-US&page=1&include_adult=false
-    const loc = req.body.loc;
+    let loc = req.body.loc;
+    if (loc === "people") loc = "person";
     const query = req.body.query;
     console.log("search: ", { loc, query });
     const resp = await search_tmdb(query, loc);
@@ -152,12 +157,12 @@ app.post("/search", async function(req, res, next) {
 
 async function search_tmdb(query, loc = "multi", page = 1) {
   // loc === multi | movie | person
-  if (![ "multi", "movie", "person" ].includes(loc))
+  if (!["multi", "movie", "person"].includes(loc))
     throw new Error("bad loc " + loc);
   let endpoint = "https://api.themoviedb.org/3/search/" + loc + "/";
   let extra_params = { query, adult: "false", page };
   const resp = await axios.get(endpoint, {
-    params : _.assign(default_params, extra_params),
+    params: _.assign(default_params, extra_params),
   });
   if (resp.status === 200 && !_.isEmpty(resp.data)) {
     const results = resp.data;
@@ -196,7 +201,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
     console.log("askd tmbd api " + cache_key);
     // console.log(_.assign(default_params, extra_params));
     const resp = await axios.get(endpoint, {
-      params : _.assign(default_params, extra_params),
+      params: _.assign(default_params, extra_params),
     });
     if (resp.status === 200 && !_.isEmpty(resp.data)) {
       thing = resp.data;
@@ -249,9 +254,9 @@ function actor_meta(actor) {
   }
   tmdb_link = "https://www.themoviedb.org/person/" + actor.id;
   if (actor.birthday && !actor.approximate_birthday) {
-    const [ byear, bmonth, bday ] = actor.birthday.split("-");
+    const [byear, bmonth, bday] = actor.birthday.split("-");
     zodiac = Zodiac.getSignByDate({ day: bday, month: bmonth });
-    zodiac = _.pick(zodiac, [ "name", "symbol" ]);
+    zodiac = _.pick(zodiac, ["name", "symbol"]);
   }
 
   return {
@@ -260,7 +265,7 @@ function actor_meta(actor) {
     died_at,
     imdb_link,
     tmdb_link,
-    popularity : actor.popularity,
+    popularity: actor.popularity,
     imdb_b,
     imdb_d,
     zodiac,

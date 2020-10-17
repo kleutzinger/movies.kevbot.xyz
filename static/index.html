@@ -28,13 +28,14 @@
     <!-- <a href="https://www.themoviedb.org/" target=”_blank” rel=”noopener noreferrer”>tmdb movie_id</a> -->
     <h1>Choose a movie, see the age of the cast</h1>
     <div id="search_wrapper">
-      <input id="search_input" class="search_box" type="text" placeholder="type to search..." /> <br />
-      <button id="search_button_movies">search movies</button>
-      <button id="search_button_people">search people</button>
+      <input id="search_input" class="search_box" type="text" placeholder="type to search..." />
+      <label class="switch"><input type="checkbox" id="search_toggle">
+        <div class="slider round"><span class="off">MOVIES</span><span class="on">PEOPLE</span></div>
+      </label>
       <button id="search_button_lucky">feeling lucky (random movie)</button>
       <div id="search_results"></div>
     </div>
-    <h2 id="movie_name">Please Search for a movie above</h2>
+    <h2 id="movie_name"></h2>
     <h2 id="thing_name"></h2>
     <div class="tabulator" id="tabulator"></div>
     <!-- <a href="/gojira">/gojira</a>
