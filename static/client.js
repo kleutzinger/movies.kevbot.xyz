@@ -127,6 +127,7 @@ async function search_for(query, loc = "movie", page = 1) {
 }
 
 function on_search_results(rows, cfg) {
+  // console.table(rows);
   ul = document.createElement("ul");
   const search_results_node = document.getElementById("search_results");
   search_results_node.innerHTML = "";
@@ -163,7 +164,7 @@ function search_result_transform(thing, cfg) {
     return `<a href="/?m=${thing.id}">${thing.title} (${thing.release_date.slice(0,4
     )})</a>`;
   } else if (thing.media_type === "person") {
-    return `<a>${thing.name}</a>`;
+    return `<a href="https://themoviedb.org/person/${thing.id}">${thing.name}</a>`;
   } else {
     return `<a>${thing.name} (tv shows unsupported)</a>`;
   }

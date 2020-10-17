@@ -2,6 +2,14 @@ body {
   margin: 10px;
 }
 
+a:hover {
+  /* border: 1px solid red; */
+}
+
+.dead_text {
+  background-color: #ffbbbb;
+  /* color: black; */
+}
 .tabulator {
   max-width: min-content;
 }

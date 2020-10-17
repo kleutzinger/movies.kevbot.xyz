@@ -93,7 +93,7 @@ app.get("/movie/:id", async function (req, res, next) {
         // }
         const actors = validResults.map((e) => e.value);
         // prettier-ignore
-        const gimme = (actor) => _.pick(actor, ["profile_path","id", "name", "birthday", "meta", "approximate_birthday"]);
+        const gimme = (actor) => _.pick(actor, ["profile_path","id", "name", "birthday", "deathday", "meta", "approximate_birthday"]);
         const cast_summary = _.sortBy(_.map(actors, gimme), [
           // 0, //don't sort
           (p) => -p.meta.popularity,

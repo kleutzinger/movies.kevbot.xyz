@@ -3,7 +3,7 @@ function populateTable(cast, movie) {
   var table = new Tabulator("#tabulator", {
     data: cast, //assign data to table
     // prettier-ignore
-    columns: genColumns(),
+    columns: genColumns(movie),
     columnMinWidth: 1,
     cellVertAlign: "middle",
     // layout: "fitData",
@@ -16,21 +16,17 @@ function populateTable(cast, movie) {
 }
 // const cfg = (await axios.get("/config")).data;
 
-function genColumns() {
+function genColumns(movie) {
   return [
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     //prettier-ignore
     { title: "Actor/Role", frozen:false, field: "meta.actor_role", formatter: "html", width:150 },
-    { title: "Status", field: "meta.status" },
-    { title: "Age<br/>today", field: "meta.age" },
-    { title: "Age<br/>then", field: "meta.filming_age" },
-    { title: "Died<br/>at", field: "meta.died_at" },
-    { title: "Popularity", field: "meta.popularity" },
-    // { field: "meta.imdb_b" },
-    // { field: "meta.imdb_d" },
+    { title: "Status", field: "meta.status_html", formatter: "html" },
+    //prettier-ignore
+    { title: `Age<br/>${date2year(movie.release_date)}`, field: "meta.filming_age", },
     { title: "Zodiac", field: "meta.zodiac_html", formatter: "html" },
-
+    { title: "Popularity", field: "meta.popularity" },
     { title: "#", field: "order", visible: false },
 
     // {
@@ -59,6 +55,12 @@ function gm_fmt(cell, formatterParams, onRendered) {
   return ret;
 }
 
+const date2year = (d) => {
+  if (d) {
+    return d.split("-")[0];
+  } else return "0000";
+};
+
 function normalize_cast(cast, movie) {
   // cast = cast.filter((e) => e.meta.status !== "no_bday");
   cast = cast.map((actor) => {
@@ -68,16 +70,42 @@ function normalize_cast(cast, movie) {
       <div>
       <strong>${actor.name}</strong></br>
       ${actor.character}</br>
-      ${actor.approximate_birthday ? actor.meta.imdb_b : actor.birthday}
+      ${
+        actor.approximate_birthday
+          ? actor.meta.imdb_b
+          : actor.birthday || "unknown"
+      }
       </div>`;
     actor.meta.zodiac_html = `
       ${_.get(actor, "meta.zodiac.symbol", "")}
       ${_.get(actor, "meta.zodiac.name", "")}
     `;
+    actor.meta.status_html = actor_to_status_html(actor);
 
     return actor;
   });
   return cast;
+}
+
+function actor_to_status_html(actor) {
+  // meta.filming_age must be set
+  let ageish = "";
+  let intro = "unknown";
+  let outro = "";
+  let _class;
+  if (actor.meta.status === "alive") {
+    ageish = actor.meta.age;
+    intro = "alive<br/>";
+    _class = "alive_text";
+  }
+  if (actor.meta.status === "deceased") {
+    ageish = actor.meta.died_at;
+    const death_year = date2year(actor.deathday);
+    intro = `died ${death_year}<br/>at `;
+    outro = " y.o.";
+    _class = "dead_text";
+  }
+  return `<span class="${_class}">${intro}${ageish}${outro}<span>`;
 }
 
 function actor_to_icon_html(actor, small = true) {
@@ -105,6 +133,9 @@ function addDataToSets(sets) {
 }
 
 function getAge(start, until = new Date()) {
+  if (start === null) {
+    return "";
+  }
   var birthDate = new Date(start);
   var until = new Date(until);
 
