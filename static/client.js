@@ -70,7 +70,7 @@ async function set_movie_table(movie_id, write_url_query = true) {
     const years_ago = -moment(movie.release_date).diff(Date.now(), "years");
     //prettier-ignore
     let title_link = linkify(movie.title, `https://www.themoviedb.org/movie/${movie.id}`)
-    let title_str = `${title_link} [${movie.release_date}] [${years_ago} years ago]`;
+    let title_str = `${title_link}</br>${movie.release_date}</br>${years_ago} years ago`;
     document.getElementById("thing_name").innerHTML = title_str;
     document.getElementById("thing_image").src = thing_to_img_src(
       movie,
