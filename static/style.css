@@ -2,7 +2,7 @@ body {
   margin: 10px;
 }
 
-.tabulator-row .tabulator-cell:first-child {
+/* .tabulator-row .tabulator-cell:first-child {
   border-left: 0px;
 }
 .tabulator-row:nth-child(2n) .tabulator-cell:first-child {
@@ -15,7 +15,7 @@ body {
 
 .tabulator-row:nth-child(2n) .tabulator-cell {
   background-color: #eeeeee;
-}
+} */
 
 .dead_text {
   background-color: #ffbbbb;

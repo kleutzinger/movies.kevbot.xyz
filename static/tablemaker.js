@@ -4,8 +4,12 @@ function populateTable(cast, movie) {
     data: cast, //assign data to table
     resizableColumns: "header",
     columns: genColumns(movie),
+    responsiveLayout: "collapse", // collapse columns that no longer fit on the table into a list under the row
     columnMinWidth: 1,
+    virtualDom: false,
     cellVertAlign: "middle",
+    cellHozAlign: "center",
+    layoutColumnsOnNewData: true,
     // layout: "fitData",
     // layout      : 'fitColumns',
     initialSort: [
@@ -21,12 +25,14 @@ function genColumns(movie) {
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     //prettier-ignore
-    { title: "Actor/Role<br/>Bday", frozen:false, field: "meta.info_column_html", formatter: "html", width:150 },
+    { title: "Actor/Role", hozAlign:"left", frozen: false, field: "meta.info_column_html", formatter: "html", width: 150 },
     //prettier-ignore
-    { title: `Age<br/>${date2year(movie.release_date)}`, field: "meta.filming_age", },
-    { title: "Status<br/>Today", field: "meta.status_html", formatter: "html" },
-    { title: "Popularity", field: "meta.popularity", visible: false },
-    { title: "#", field: "order", visible: false },
+    { title: `Age ${date2year(movie.release_date)}`, field: "meta.filming_age", },
+    { title: "Status Today", field: "meta.status_html", formatter: "html" },
+    //prettier-ignore
+    { title: "Birthday", field: "meta.birthday_zodiac_html", formatter: "html" },
+    { title: "Popularity", field: "meta.popularity", visible: true },
+    { title: "cast_order", field: "order", visible: false },
 
     // {
     //   title           : "Time",
@@ -61,10 +67,13 @@ const date2year = (d) => {
 };
 
 const actor_to_zodiac_html = (actor) => {
-  return `
-  ${_.get(actor, "meta.zodiac.symbol", "")}
-  ${_.get(actor, "meta.zodiac.name", "").slice(0, 100)}
-`;
+  if (actor.birthday !== null && !actor.approximate_birthday)
+    return `<span title="${_.get(actor, "meta.zodiac.name")}">
+    ${_.get(actor, "meta.zodiac.symbol", "")}
+  </span>`;
+  else {
+    return "";
+  }
 };
 
 function normalize_cast(cast, movie) {
@@ -76,20 +85,16 @@ function normalize_cast(cast, movie) {
       <div>
       <strong>${actor.name}</strong></br>
       ${actor.character || ""}</br>
-      ${
-        actor.approximate_birthday
-          ? actor.meta.imdb_b
-          : actor.birthday || "Birthday Unknown"
-      }
-      <span title="${_.get(actor, "meta.zodiac.name")}">
-        ${_.get(actor, "meta.zodiac.symbol", "")}
-      </span>
       </div>`;
 
-    actor.meta.zodiac_html = actor_to_zodiac_html(actor);
-
+    actor.meta.birthday_zodiac_html =
+      actor_to_zodiac_html(actor) +
+      `${
+        actor.approximate_birthday
+          ? actor.meta.imdb_b
+          : actor.birthday || "Unknown"
+      }`;
     actor.meta.status_html = actor_to_status_html(actor);
-
     return actor;
   });
   return cast;
