@@ -28,6 +28,19 @@ body {
   visibility: hidden;
 }
 
+body {
+  display: flex;
+  /* makes it ~~horiz~~ and vertically centered */
+  /* https://youtu.be/GE-waX4jmdA?t=410 */
+  /* align-items: center; */
+  justify-content: center;
+}
+
+html,
+body {
+  height: 100%;
+}
+
 .infoImage {
   display: inline-block;
   height: 120px;
