@@ -22,9 +22,9 @@ function genColumns(movie) {
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     //prettier-ignore
     { title: "Actor/Role<br/>Bday", frozen:false, field: "meta.actor_role", formatter: "html", width:150 },
-    { title: "Status<br/>Today", field: "meta.status_html", formatter: "html" },
     //prettier-ignore
     { title: `Age<br/>${date2year(movie.release_date)}`, field: "meta.filming_age", },
+    { title: "Status<br/>Today", field: "meta.status_html", formatter: "html" },
     { title: "Zodiac", field: "meta.zodiac_html", formatter: "html" },
     { title: "Popularity", field: "meta.popularity" },
     { title: "#", field: "order", visible: false },
