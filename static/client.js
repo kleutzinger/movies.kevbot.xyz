@@ -25,16 +25,17 @@ function events_setup() {
   });
   document
     .getElementById("search_button_lucky")
-    .addEventListener("click", async () => {
-      while (!(await set_movie_table(Math.floor(Math.random() * 10000)))) {
-        // empty while
-      }
+    .addEventListener("click", async (e) => {
+      e.target.setAttribute("disabled", true);
+      document.getElementById("thing_name").innerText = "Getting New Movie";
+
+      axios.get("/random_id").then(async (r) => {
+        const id = r.data.id;
+        await set_movie_table(id);
+
+        e.target.removeAttribute("disabled");
+      });
     });
-  // search_input.onkeydown = function(e) {
-  //   if (e.key == "Enter") {
-  //     search_for(search_input.value);
-  //   }
-  // };
   search_input.onkeyup = _.debounce(() => {
     onSearchKeyUp();
   }, 250);
@@ -126,7 +127,7 @@ async function search_for(query, loc = "movie", page = 1) {
 
   const resp = await axios.post(endpoint, { loc, query, page });
   const rows = resp.data.results;
-  const cfg = (await axios.get("/config")).data;
+  const cfg = window.tmdb_cfg || (await axios.get("/config")).data;
   on_search_results(rows, cfg);
 }
 

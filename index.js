@@ -19,6 +19,7 @@ const BASE_URL = process.env.BASE_URL;
 const client = require("./db.js");
 const express = require("express");
 const axios = require("axios");
+const any = require("promise.any");
 const Zodiac = require("zodiac-signs")("en");
 
 const PORT = process.env.PORT || 5000;
@@ -133,6 +134,30 @@ app.get("/config", async function (req, res, next) {
   }
 });
 
+app.get("/random_id", async (req, res, next) => {
+  // return a random valid movie id number (or movie obj?) caching?
+  try {
+    const endpoint = "https://api.themoviedb.org/3/movie/"; // + id
+    const random_ids = [];
+    for (let i = 0; i < 5; i++) {
+      random_ids.push(Math.floor(Math.random() * 10000));
+    }
+    const proms = random_ids.map((id) => {
+      return axios.get(endpoint + id, {
+        params: { validateStatus: false, ...default_params },
+      });
+    });
+    console.log(random_ids);
+    r = await any(proms);
+    // client.setex("/movie/" + r.data.id, 10000, JSON.stringify(r.data));
+    res.json(r.data);
+    // axios.get(url, { validateStatus: false });
+    // Promise.any([axios.get(tmdb.org/movie/math.random())])
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any
+  } catch (error) {
+    next(error);
+  }
+});
 app.post("/search", async function (req, res, next) {
   try {
     // loc === multi | movie | person | people
@@ -151,6 +176,7 @@ app.post("/search", async function (req, res, next) {
 
     res.json(resp);
   } catch (error) {
+    res.json([]);
     next(error);
   }
 });

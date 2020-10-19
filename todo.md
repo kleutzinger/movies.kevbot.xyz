@@ -23,6 +23,7 @@
 - [x] add default blacked out image
 - [ ] include people with no_bday
 - [ ] server-side random movie-getting
+- - ask `/random` for random VALID movie_id (cache when it finds one)
 - [ ] current age/year died
 
 ## Design:
