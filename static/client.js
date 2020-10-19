@@ -63,8 +63,9 @@ function create_element(htmlString) {
 async function set_movie_table(movie_id, write_url_query = true) {
   try {
     const endpoint = "/movie/" + movie_id;
-    console.log(`getting ${endpoint} from server`);
+    console.time(endpoint);
     const resp = await axios.get(endpoint);
+    console.timeEnd(endpoint);
     console.log(resp.data.movie.title);
     let { movie, cast } = resp.data;
     cast = movie_onto_cast(movie, cast);
