@@ -2,8 +2,19 @@ body {
   margin: 10px;
 }
 
-a:hover {
-  /* border: 1px solid red; */
+.tabulator-row .tabulator-cell:first-child {
+  border-left: 0px;
+}
+.tabulator-row:nth-child(2n) .tabulator-cell:first-child {
+  border-left: 0px;
+}
+
+.tabulator-row .tabulator-cell {
+  background-color: #daddee;
+}
+
+.tabulator-row:nth-child(2n) .tabulator-cell {
+  background-color: #eeeeee;
 }
 
 .dead_text {
