@@ -21,12 +21,11 @@ function genColumns(movie) {
     //prettier-ignore
     { title: "Icon", field: "meta.icon_html", frozen:true, hozAlign: "center", formatter: "html" },
     //prettier-ignore
-    { title: "Actor/Role<br/>Bday", frozen:false, field: "meta.actor_role", formatter: "html", width:150 },
+    { title: "Actor/Role<br/>Bday", frozen:false, field: "meta.info_column_html", formatter: "html", width:150 },
     //prettier-ignore
     { title: `Age<br/>${date2year(movie.release_date)}`, field: "meta.filming_age", },
     { title: "Status<br/>Today", field: "meta.status_html", formatter: "html" },
-    { title: "Zodiac", field: "meta.zodiac_html", formatter: "html" },
-    { title: "Popularity", field: "meta.popularity" },
+    { title: "Popularity", field: "meta.popularity", visible: false },
     { title: "#", field: "order", visible: false },
 
     // {
@@ -61,25 +60,34 @@ const date2year = (d) => {
   } else return "0000";
 };
 
+const actor_to_zodiac_html = (actor) => {
+  return `
+  ${_.get(actor, "meta.zodiac.symbol", "")}
+  ${_.get(actor, "meta.zodiac.name", "").slice(0, 100)}
+`;
+};
+
 function normalize_cast(cast, movie) {
   // cast = cast.filter((e) => e.meta.status !== "no_bday");
   cast = cast.map((actor) => {
     actor.meta.filming_age = getAge(actor.birthday, movie.release_date);
     actor.meta.icon_html = actor_to_icon_html(actor, false);
-    actor.meta.actor_role = `
+    actor.meta.info_column_html = `
       <div>
       <strong>${actor.name}</strong></br>
-      ${actor.character}</br>
+      ${actor.character || ""}</br>
       ${
         actor.approximate_birthday
           ? actor.meta.imdb_b
-          : actor.birthday || "unknown"
+          : actor.birthday || "Birthday Unknown"
       }
+      <span title="${_.get(actor, "meta.zodiac.name")}">
+        ${_.get(actor, "meta.zodiac.symbol", "")}
+      </span>
       </div>`;
-    actor.meta.zodiac_html = `
-      ${_.get(actor, "meta.zodiac.symbol", "")}
-      ${_.get(actor, "meta.zodiac.name", "").slice(0, 3)}
-    `;
+
+    actor.meta.zodiac_html = actor_to_zodiac_html(actor);
+
     actor.meta.status_html = actor_to_status_html(actor);
 
     return actor;
@@ -90,7 +98,7 @@ function normalize_cast(cast, movie) {
 function actor_to_status_html(actor) {
   // meta.filming_age must be set
   let ageish = "";
-  let intro = "unknown";
+  let intro = "Unknown</br>Status";
   let outro = "";
   let _class;
   if (actor.meta.status === "alive") {
