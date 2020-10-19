@@ -78,7 +78,7 @@ function normalize_cast(cast, movie) {
       </div>`;
     actor.meta.zodiac_html = `
       ${_.get(actor, "meta.zodiac.symbol", "")}
-      ${_.get(actor, "meta.zodiac.name", "")}
+      ${_.get(actor, "meta.zodiac.name", "").slice(0, 3)}
     `;
     actor.meta.status_html = actor_to_status_html(actor);
 

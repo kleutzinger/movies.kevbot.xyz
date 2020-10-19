@@ -1,11 +1,11 @@
 async function init() {
+  window.tmdb_cfg = (await axios.get("/config")).data;
   let query = new URLSearchParams(window.location.search);
   let movie_id = query.get("m");
   if (movie_id) set_movie_table(movie_id);
   if (window.location.href.includes("localhost:")) {
     document.body.style.backgroundColor = "#e5e5aa";
   }
-  window.tmdb_cfg = (await axios.get("/config")).data;
 
   events_setup();
 }
@@ -68,17 +68,18 @@ async function set_movie_table(movie_id, write_url_query = true) {
     let { movie, cast } = resp.data;
     cast = movie_onto_cast(movie, cast);
     const years_ago = -moment(movie.release_date).diff(Date.now(), "years");
-    //prettier-ignore
-    let title_link = linkify(movie.title, `https://www.themoviedb.org/movie/${movie.id}`)
-    let title_str = `${title_link}</br>${movie.release_date}</br>${years_ago} years ago`;
-    document.getElementById("thing_name").innerHTML = title_str;
+    const tmdb_movie_link = `https://www.themoviedb.org/movie/${movie.id}`;
+    const directors = _.filter(movie.credits.crew, { job: "Director" });
+    const director_names = _.map(directors, "name").join(", ");
+    let title_link = linkify(movie.title, tmdb_movie_link);
+    let description_string = `${movie.release_date}</br>${years_ago} years ago</br>by ${director_names}`;
+    document.getElementById("thing_name").innerHTML = movie.title;
+    document.getElementById("thing_description").innerHTML = description_string;
     document.getElementById("thing_image").src = thing_to_img_src(
       movie,
       window.tmdb_cfg
     );
-
-    console.log("movie, ", movie);
-    console.table(cast);
+    document.getElementById("thing_image_link").href = tmdb_movie_link;
     // window.location.search = `m=${movie_id}`;
     if ("URLSearchParams" in window && write_url_query) {
       var searchParams = new URLSearchParams(window.location.search);
@@ -88,6 +89,8 @@ async function set_movie_table(movie_id, write_url_query = true) {
       history.pushState(null, "", newRelativePathQuery);
     }
     populateTable(cast, movie);
+    console.log("movie, ", movie);
+    console.table(cast);
     return true;
   } catch (error) {
     console.log("no response ", error);

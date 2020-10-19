@@ -158,7 +158,7 @@ app.post("/search", async function (req, res, next) {
 async function search_tmdb(query, loc = "multi", page = 1) {
   // loc === multi | movie | person
   if (!["multi", "movie", "person"].includes(loc))
-    throw new Error("bad loc " + loc);
+    throw new Error("bad loc @ index.js search_tmdb() " + loc);
   let endpoint = "https://api.themoviedb.org/3/search/" + loc + "/";
   let extra_params = { query, adult: "false", page };
   const resp = await axios.get(endpoint, {
@@ -167,7 +167,7 @@ async function search_tmdb(query, loc = "multi", page = 1) {
   if (resp.status === 200 && !_.isEmpty(resp.data)) {
     const results = resp.data;
     return results;
-  }
+  } else return [];
 }
 
 async function get_tmdb_config() {
