@@ -1,6 +1,6 @@
 ## Todo
 
-- [ ] Image of the movie
+- [x] Image of the movie
 - [x] Image of the actors
 - [x] Cache config from TMDB api
 - [x] ~~set_hash() on api call~~
@@ -12,19 +12,21 @@
 - - [x] use query strings?
 - - [ ] https://css-tricks.com/separate-form-submit-buttons-go-different-urls/
 - [x] auto search on type
-- [ ] toggle between ppl search and move search
-- [ ] column titled "age in \$release_year"
+- [x] toggle between ppl search and move search
+- [x] column titled "age in \$release_year"
 - [x] fix table greyspace
 - - set .tabulator css to `max-width: min-content;`
-- [ ] fix max character name width
+- [x] fix max character name width
+- - it just rolls off the end
 - [x] star sign (optional?)
 - - used `require("zodiac-signs")("en");`
 - [x] actor.meta.imdb_b / imdb_d
 - [x] add default blacked out image
-- [ ] include people with no_bday
-- [ ] server-side random movie-getting
+- [x] include people with no_bday
+- [x] server-side random movie-getting
+- - [ ] try to guarantee that it works, all 5 can fail
 - - ask `/random` for random VALID movie_id (cache when it finds one)
-- [ ] current age/year died
+- [x] current age/year died
 
 ## Design:
 
