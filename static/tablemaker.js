@@ -6,7 +6,7 @@ function populateTable(cast, movie) {
     columns: genColumns(movie),
     responsiveLayout: "collapse", // collapse columns that no longer fit on the table into a list under the row
     columnMinWidth: 1,
-    virtualDom: false,
+    virtualDom: true,
     cellVertAlign: "middle",
     cellHozAlign: "center",
     layoutColumnsOnNewData: true,
