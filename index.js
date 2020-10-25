@@ -190,7 +190,7 @@ app.post("/search", async function (req, res, next) {
     let loc = req.body.loc;
     if (loc === "people") loc = "person";
     const query = req.body.query;
-    if (query === "") return r  es.json([]);
+    if (query === "") return res.json([]);
     console.log("search: ", { loc, query });
     const resp = await search_tmdb(query, loc);
     if (loc !== "multi") {
