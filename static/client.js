@@ -122,17 +122,40 @@ async function search_for(query, loc = "movie", page = 1) {
   // loc === multi | movie | person
   const endpoint = "/search/";
   console.log("searching for: " + query);
-  document.getElementById(
-    "search_results"
-  ).innerHTML = `<p>loading search...</p>`;
-
   const resp = await axios.post(endpoint, { loc, query, page });
   const rows = resp.data.results;
   const cfg = window.tmdb_cfg || (await axios.get("/config")).data;
-  on_search_results(rows, cfg);
+  on_search_results2(rows, cfg);
 }
 
 function on_search_results(rows, cfg) {
+  // console.table(rows);
+  ul = document.createElement("ul");
+  const search_results_node = document.getElementById("search_results");
+  search_results_node.innerHTML = "";
+  search_results_node.appendChild(ul);
+  rows.forEach(function (item) {
+    let li = document.createElement("li");
+    ul.appendChild(li);
+    li.innerHTML += search_result_transform(item, cfg);
+  });
+}
+
+function on_search_results2(rows, cfg) {
+  `
+  <table>
+  <tr>
+    <th>Column 1 Heading</th>
+    <th>Column 2 Heading</th>
+    <th>Column 3 Heading</th>
+  </tr>
+  <tr>
+    <td>Data in Column 1, Row 2</td>
+    <td>Data in Column 2, Row 2</td>
+    <td>Data in Column 3, Row 2</td>
+  </tr>
+</table>
+  `;
   // console.table(rows);
   ul = document.createElement("ul");
   const search_results_node = document.getElementById("search_results");
@@ -204,7 +227,7 @@ function makeTable() {
 function linkify(str, href) {
   // surround: <a $href> $str </a>
   // https://www.themoviedb.org/movie/${movie.id}
-  return `<a href="${href}" target=”_blank” rel=”noopener noreferrer”>${str}</a>`;
+  return `<a href="${href}">${str}</a>`;
 }
 
 document.addEventListener("DOMContentLoaded", init);

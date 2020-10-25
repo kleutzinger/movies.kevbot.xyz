@@ -14,6 +14,7 @@
     "lodash": "^4.17.20",
     "morgan": "^1.10.0",
     "object-sizeof": "^1.6.1",
+    "pretty-error": "^2.1.2",
     "promise-redis": "0.0.5",
     "promise.any": "^2.0.1",
     "redis": "^3.0.2",

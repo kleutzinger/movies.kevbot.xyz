@@ -21,6 +21,7 @@ const express = require("express");
 const axios = require("axios");
 const any = require("promise.any");
 const Zodiac = require("zodiac-signs")("en");
+const pe = require("pretty-error").start();
 
 const PORT = process.env.PORT || 5000;
 const INTERNAL_URL = `http://localhost:${PORT}`;
@@ -67,6 +68,30 @@ app.get("/gojira", (req, res) => {
 
 app.get("/random_movie", async function (req, res, next) {
   res.json({ message: "todo" });
+});
+
+app.get("/valid_ids", async function (req, res, next) {
+  // const endpoint = "https://api.themoviedb.org/3/movie/"; // + id
+  const endpoint = "https://www.themoviedb.org/movie/";
+  const ordered_ids = [];
+  for (let i = 0; i < 300; i++) {
+    ordered_ids.push(i);
+  }
+  const proms = ordered_ids.map((id) => {
+    return axios.get(endpoint + id, {
+      params: { validateStatus: false, ...default_params },
+    });
+  });
+  console.log(ordered_ids);
+  r = await Promise.allSettled(proms);
+  const statuses = r.map((e, idx) => {
+    return {
+      idx,
+      status: e.status === "fulfilled",
+    };
+  });
+  // client.setex("/movie/" + r.data.id, 10000, JSON.stringify(r.data));
+  res.json(statuses);
 });
 
 app.get("/movie/:id", async function (req, res, next) {
@@ -165,6 +190,7 @@ app.post("/search", async function (req, res, next) {
     let loc = req.body.loc;
     if (loc === "people") loc = "person";
     const query = req.body.query;
+    if (query === "") return r  es.json([]);
     console.log("search: ", { loc, query });
     const resp = await search_tmdb(query, loc);
     if (loc !== "multi") {
@@ -180,6 +206,12 @@ app.post("/search", async function (req, res, next) {
     next(error);
   }
 });
+
+// process.on("unhandledRejection", (err) => {
+//   console.error(err.stack);
+//   console.log("exit?");
+//   // process.exit(1);
+// });
 
 async function search_tmdb(query, loc = "multi", page = 1) {
   // loc === multi | movie | person
