@@ -27,6 +27,12 @@
 - - [ ] try to guarantee that it works, all 5 can fail
 - - ask `/random` for random VALID movie_id (cache when it finds one)
 - [x] current age/year died
+- [ ] random button: show color of upcoming random movie (clue)
+- [ ] or make background kind of the color of the movie
+
+## unrelated idea
+
+find movie gradient of film by center pixel stripe for each frame (or every n frames)
 
 ## Design:
 

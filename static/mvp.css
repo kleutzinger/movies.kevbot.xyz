@@ -348,7 +348,7 @@ select,
 textarea {
     display: block;
     font-size: inherit;
-    max-width: var(--width-card-wide);
+    max-width: var(--width-card-medium);
 }
 
 input[type="checkbox"],

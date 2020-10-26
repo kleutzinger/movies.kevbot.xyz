@@ -16,7 +16,7 @@ if (!process.env.BASE_URL) {
 }
 const BASE_URL = process.env.BASE_URL;
 
-const client = require("./db.js");
+const { client } = require("./db.js");
 const express = require("express");
 const axios = require("axios");
 const any = require("promise.any");
