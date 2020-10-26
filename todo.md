@@ -17,6 +17,7 @@
 - [x] fix table greyspace
 - - set .tabulator css to `max-width: min-content;`
 - [x] fix max character name width
+- [x] fix search_input width (width: 100%; box-sizing: border-box;)
 - - it just rolls off the end
 - [x] star sign (optional?)
 - - used `require("zodiac-signs")("en");`
