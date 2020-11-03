@@ -137,7 +137,7 @@ function on_search_results(rows, cfg) {
   rows.forEach(function (item) {
     let li = document.createElement("li");
     ul.appendChild(li);
-    li.innerHTML += search_result_transform(item, cfg);
+    li.innerHTML += search_result_to_link_text(item, cfg);
   });
 }
 
@@ -164,7 +164,7 @@ function on_search_results2(rows, cfg) {
   rows.forEach(function (item) {
     let li = document.createElement("li");
     ul.appendChild(li);
-    li.innerHTML += search_result_transform(item, cfg);
+    li.innerHTML += search_result_to_link_text(item, cfg);
   });
 }
 
@@ -186,7 +186,7 @@ function thing_to_img_src(thing, cfg, is_icon = true) {
   else return "";
 }
 
-function search_result_transform(thing, cfg) {
+function search_result_to_link_text(thing, cfg) {
   // transform search result objects to HTML
   if (thing.media_type === "movie") {
     // prettier-ignore
