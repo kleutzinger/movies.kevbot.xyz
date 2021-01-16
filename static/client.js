@@ -75,7 +75,8 @@ async function set_movie_table(movie_id, write_url_query = true) {
     const director_names = _.map(directors, "name").join(", ");
     let title_link = linkify(movie.title, tmdb_movie_link);
     let description_string = `${movie.release_date}</br>${years_ago} years ago</br>Directed by ${director_names}`;
-    document.getElementById("thing_name").innerHTML = movie.title;
+    const seen_icon = movie.seen_by_kevin ? "🎞️" : "";
+    document.getElementById("thing_name").innerHTML = seen_icon + movie.title;
     document.getElementById("thing_description").innerHTML = description_string;
     document.getElementById("thing_image").src = thing_to_img_src(
       movie,
@@ -157,6 +158,7 @@ function on_search_results2(rows, cfg) {
 </table>
   `;
   // console.table(rows);
+  if (!rows) rows = [];
   ul = document.createElement("ul");
   const search_results_node = document.getElementById("search_results");
   search_results_node.innerHTML = "";
@@ -189,9 +191,10 @@ function thing_to_img_src(thing, cfg, is_icon = true) {
 function search_result_to_link_text(thing, cfg) {
   // transform search result objects to HTML
   if (thing.media_type === "movie") {
-    // prettier-ignore
-    return `<a href="/?m=${thing.id}">${thing.title} (${thing.release_date.slice(0,4
-    )})</a>`;
+    const seen_icon = thing.seen_by_kevin ? "🎞️" : "";
+    return `<a href="/?m=${thing.id}">${seen_icon} ${
+      thing.title
+    } (${thing.release_date.slice(0, 4)})</a>`;
   } else if (thing.media_type === "person") {
     return `<a href="https://themoviedb.org/person/${thing.id}">${thing.name}</a>`;
   } else {
@@ -239,7 +242,7 @@ function onSearchKeyUp() {
   const loc = document.getElementById("search_toggle").checked
     ? "person"
     : "movie";
-  search_for(search_val, loc);
+  search_for(search_val || "", loc);
 }
 
 // $("#search_term").on(

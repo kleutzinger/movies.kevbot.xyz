@@ -16,7 +16,7 @@ if (!process.env.BASE_URL) {
 }
 const BASE_URL = process.env.BASE_URL;
 
-const { client } = require("./db.js");
+const { client, is_seen_by_kevin } = require("./db.js");
 const express = require("express");
 const axios = require("axios");
 const any = require("promise.any");
@@ -97,6 +97,7 @@ app.get("/valid_ids", async function (req, res, next) {
 app.get("/movie/:id", async function (req, res, next) {
   try {
     const resp = await get_tmdb(req.params.id, "movie");
+    resp.seen_by_kevin = is_seen_by_kevin(resp);
     const cast_ids = _.get(resp, "credits.cast").map((e) => e.id);
     const clickable = cast_ids.slice(0).map((e) => {
       const base_url = process.env.BASE_URL;
@@ -198,6 +199,13 @@ app.post("/search", async function (req, res, next) {
         e.media_type = loc;
         return e;
       });
+    }
+    if (loc === "movie") {
+      resp.results = resp.results.map((movie) => {
+        movie.seen_by_kevin = is_seen_by_kevin(movie);
+        return movie;
+      });
+      resp.results = _.sortBy(resp.results, (m) => !m.seen_by_kevin);
     }
 
     res.json(resp);
