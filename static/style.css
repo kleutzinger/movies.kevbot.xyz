@@ -162,6 +162,7 @@ input:checked + .slider .off {
 }
 
 .paragraph {
+  max-width: 79%;
   color: #555;
   display: flex;
   flex-direction: column;

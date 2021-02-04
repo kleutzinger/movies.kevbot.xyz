@@ -252,7 +252,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
   } else if (loc === "movie") {
     cache_key = "/movie/" + id;
     endpoint = "https://api.themoviedb.org/3/movie/" + id;
-    extra_params = { append_to_response: "credits" };
+    extra_params = { append_to_response: "credits,videos" };
   } else if (loc === "config") {
     cache_key = "/config/";
     endpoint = "https://api.themoviedb.org/3/configuration";
@@ -273,6 +273,12 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
       thing = resp.data;
       // prettier-ignore
       if (loc == "actor") {thing = _.omit(thing, [ "credits", "biography", "also_known_as" ]);}
+      if (loc == "movie") {
+        const trailer = find_trailer(thing.videos.results);
+        if (trailer) {
+          thing.trailer_link = trailer;
+        }
+      }
       client.setex(cache_key, cache_expiry, JSON.stringify(thing));
       thing.cache_miss = true;
     }
@@ -346,4 +352,15 @@ function getAge(start, until = new Date()) {
     age--;
   }
   return age;
+}
+
+function find_trailer(results) {
+  try {
+    const trailer = _.find(results, { site: "YouTube", type: "Trailer" });
+    const yt_id = _.get(trailer, "key", false);
+    return yt_id ? `https://www.youtube.com/watch?v=${yt_id}` : false;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }

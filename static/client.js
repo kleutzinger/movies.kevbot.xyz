@@ -73,11 +73,19 @@ async function set_movie_table(movie_id, write_url_query = true) {
     const tmdb_movie_link = `https://www.themoviedb.org/movie/${movie.id}`;
     const directors = _.filter(movie.credits.crew, { job: "Director" });
     const director_names = _.map(directors, "name").join(", ");
+    const movie_overview = _.get(movie, "overview");
+    const trailer_link = _.get(movie, "trailer_link");
     let title_link = linkify(movie.title, tmdb_movie_link);
     let description_string = `${movie.release_date}</br>${years_ago} years ago</br>Directed by ${director_names}`;
+    let overview_text = "";
+    overview_text += movie_overview ? `<br/>${movie_overview}` : "";
+    if (trailer_link) {
+      overview_text += `<br/><a href="${trailer_link}">Trailer (YouTube)</a>`;
+    }
     const seen_icon = movie.seen_by_kevin ? "🎞️" : "";
     document.getElementById("thing_name").innerHTML = seen_icon + movie.title;
     document.getElementById("thing_description").innerHTML = description_string;
+    document.getElementById("movie_overview").innerHTML = overview_text;
     document.getElementById("thing_image").src = thing_to_img_src(
       movie,
       window.tmdb_cfg
