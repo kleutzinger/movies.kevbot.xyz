@@ -24,6 +24,7 @@
   },
   "scripts": {
     "start": "node index.js",
+    "build": "python3 json_create.py",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
