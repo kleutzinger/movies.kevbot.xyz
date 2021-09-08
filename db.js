@@ -6,15 +6,11 @@ const fs = require("fs");
 const _ = require("lodash");
 const parse = require("csv-parse/lib/sync");
 let kev_seen_table = {};
-try {
-  const watched_csv = fs.readFileSync("watched.csv");
-  const watched = parse(watched_csv, { columns: true });
-  for (const movie of watched) {
-    const cur = movie["Name"] + movie["Year"];
-    kev_seen_table[cur] = true;
-  }
-} catch {
-  console.log(`could not load watched.csv`);
+const watched_csv = fs.readFileSync("watched.csv");
+const watched = parse(watched_csv, { columns: true });
+for (const movie of watched) {
+  const cur = movie["Name"] + movie["Year"];
+  kev_seen_table[cur] = true;
 }
 console.log(`Kevin has seen ${Object.keys(kev_seen_table).length} movies`);
 
