@@ -94,6 +94,15 @@ app.get("/valid_ids", async function (req, res, next) {
   res.json(statuses);
 });
 
+app.get("/movie-actor-count/:id", async function (req, res, next) {
+  try {
+    const resp = await get_tmdb(req.params.id, "movie");
+    res.json(_.get(resp, "credits.cast").length);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get("/movie/:id", async function (req, res, next) {
   try {
     const resp = await get_tmdb(req.params.id, "movie");

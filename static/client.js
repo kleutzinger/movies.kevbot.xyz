@@ -62,10 +62,13 @@ function create_element(htmlString) {
 
 async function set_movie_table(movie_id, write_url_query = true) {
   try {
-    const endpoint = "/movie/" + movie_id;
-    console.time(endpoint);
-    const resp = await axios.get(endpoint);
-    console.timeEnd(endpoint);
+    const movie_endpoint = "/movie/" + movie_id;
+    const movie_actor_count_endpoint = "/movie-actor-count/" + movie_id;
+    console.time(movie_endpoint);
+    const actor_count = (await axios.get(movie_actor_count_endpoint)).data;
+    document.getElementById("tabulator").innerHTML = `<p>fetching ${actor_count} actors</p>`
+    const resp = await axios.get(movie_endpoint);
+    console.timeEnd(movie_endpoint);
     console.log(resp.data.movie.title);
     let { movie, cast } = resp.data;
     cast = movie_onto_cast(movie, cast);
