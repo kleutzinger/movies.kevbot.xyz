@@ -271,7 +271,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
   }
   // check cache
   const cached = await client.get(cache_key);
-  if (false && cached != null) {
+  if (cached != null) {
     thing = JSON.parse(cached);
   } else {
     console.log("askd tmbd api " + cache_key);
