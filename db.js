@@ -3,10 +3,16 @@ dotenv.config();
 var redis = require("promise-redis")();
 
 console.log(process.env.FAKE_REDIS);
+
+function fix_redis_uri(a) {
+  const usr = a.split("redis://")[1].split(":")[0];
+  a = a.replace(usr, "");
+  return a;
+}
 const client =
   process.env.FAKE_REDIS === "1"
     ? require("fakeredis").createClient()
-    : redis.createClient(process.env.REDIS_URL);
+    : redis.createClient(fix_redis_uri(process.env.REDIS_URL));
 const fs = require("fs");
 const _ = require("lodash");
 const parse = require("csv-parse/lib/sync");
