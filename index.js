@@ -219,6 +219,7 @@ app.post("/search", async function (req, res, next) {
 
     res.json(resp);
   } catch (error) {
+    console.log(error.message);
     res.json([]);
     next(error);
   }
@@ -234,7 +235,7 @@ async function search_tmdb(query, loc = "multi", page = 1) {
   // loc === multi | movie | person
   if (!["multi", "movie", "person"].includes(loc))
     throw new Error("bad loc @ index.js search_tmdb() " + loc);
-  let endpoint = "https://api.themoviedb.org/3/search/" + loc + "/";
+  let endpoint = "https://api.themoviedb.org/3/search/" + loc;
   let extra_params = { query, adult: "false", page };
   const resp = await axios.get(endpoint, {
     params: _.assign(default_params, extra_params),
@@ -270,7 +271,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
   }
   // check cache
   const cached = await client.get(cache_key);
-  if (cached != null) {
+  if (false && cached != null) {
     thing = JSON.parse(cached);
   } else {
     console.log("askd tmbd api " + cache_key);

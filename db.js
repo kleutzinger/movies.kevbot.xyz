@@ -1,7 +1,12 @@
 const dotenv = require("dotenv");
 dotenv.config();
 var redis = require("promise-redis")();
-const client = redis.createClient(process.env.REDIS_URL);
+
+console.log(process.env.FAKE_REDIS);
+const client =
+  process.env.FAKE_REDIS === "1"
+    ? require("fakeredis").createClient()
+    : redis.createClient(process.env.REDIS_URL);
 const fs = require("fs");
 const _ = require("lodash");
 const parse = require("csv-parse/lib/sync");
