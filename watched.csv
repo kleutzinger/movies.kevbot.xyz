@@ -28,7 +28,7 @@ Date,Name,Year,Letterboxd URI
 2018-07-24,Guardians of the Galaxy Vol. 2,2017,https://boxd.it/8MxC
 2018-07-24,Star Wars,1977,https://boxd.it/72s
 2018-07-24,Birdman or (The Unexpected Virtue of Ignorance),2014,https://boxd.it/5RFA
-2018-07-24,Ex Machina,2015,https://boxd.it/7T2k
+2018-07-24,Ex Machina,2014,https://boxd.it/7T2k
 2018-07-24,The Lord of the Rings: The Fellowship of the Ring,2001,https://boxd.it/2b5O
 2018-07-24,Eternal Sunshine of the Spotless Mind,2004,https://boxd.it/6YK
 2018-07-24,"I, Tonya",2017,https://boxd.it/dzR0
@@ -422,7 +422,7 @@ Date,Name,Year,Letterboxd URI
 2018-08-22,Layer Cake,2004,https://boxd.it/23LC
 2018-08-22,Stardust,2007,https://boxd.it/272w
 2018-08-22,Ghost World,2001,https://boxd.it/28Dy
-2018-08-22,Heathers,1989,https://boxd.it/26x4
+2018-08-22,Heathers,1988,https://boxd.it/26x4
 2018-08-22,Night of the Living Dead,1968,https://boxd.it/1WwA
 2018-08-22,To Kill a Mockingbird,1962,https://boxd.it/2a2E
 2018-08-22,Tuck Everlasting,2002,https://boxd.it/1Psm
@@ -796,7 +796,7 @@ Date,Name,Year,Letterboxd URI
 2018-10-05,Across the Universe,2007,https://boxd.it/23X4
 2018-10-05,Superbad,2007,https://boxd.it/20hO
 2018-10-05,Carnage,2011,https://boxd.it/2peU
-2018-10-06,Twin Peaks,1989,https://boxd.it/g8pk
+2018-10-06,Twin Peaks,1990,https://boxd.it/g8pk
 2018-10-06,Super Size Me,2004,https://boxd.it/1YQC
 2018-10-06,Pet Sematary,1989,https://boxd.it/1ZBy
 2018-10-06,Footloose,1984,https://boxd.it/288A
@@ -846,7 +846,7 @@ Date,Name,Year,Letterboxd URI
 2018-11-17,Rashomon,1950,https://boxd.it/2a9K
 2018-11-21,Dogtooth,2009,https://boxd.it/158K
 2018-11-23,The Assassination of Jesse James by the Coward Robert Ford,2007,https://boxd.it/24dG
-2018-11-24,Dracula,1992,https://boxd.it/223a
+2018-11-24,Bram Stoker's Dracula,1992,https://boxd.it/223a
 2018-11-24,Ernest Goes to Camp,1987,https://boxd.it/1G1c
 2018-11-24,Ernest Goes to Jail,1990,https://boxd.it/1G04
 2018-11-24,The Beverly Hillbillies,1993,https://boxd.it/1UMQ
@@ -983,7 +983,7 @@ Date,Name,Year,Letterboxd URI
 2019-06-03,The Stupids,1996,https://boxd.it/1KoY
 2019-06-03,The Little Rascals,1994,https://boxd.it/1V8i
 2019-06-03,The Big Green,1995,https://boxd.it/1tTg
-2019-06-03,Game Box 1.0,2004,https://boxd.it/1eiY
+2019-06-03,Gamebox 1.0,2004,https://boxd.it/1eiY
 2019-06-03,Remote,1993,https://boxd.it/Ghs
 2019-06-03,A Kid in King Arthur's Court,1995,https://boxd.it/192G
 2019-06-04,Clerks,1994,https://boxd.it/2706
@@ -1073,7 +1073,7 @@ Date,Name,Year,Letterboxd URI
 2020-05-27,Live Free or Die Hard,2007,https://boxd.it/28zQ
 2020-05-27,The Fox and the Hound,1981,https://boxd.it/1V0o
 2020-05-28,Sonatine,1993,https://boxd.it/20TI
-2020-05-28,Dark Star: HR Giger’s World,2014,https://boxd.it/9le6
+2020-05-28,Dark Star: H. R. Giger's World,2014,https://boxd.it/9le6
 2020-06-14,Fire and Ice,1983,https://boxd.it/1MX2
 2020-06-14,La Haine,1995,https://boxd.it/2as8
 2020-06-15,Dennis the Menace,1993,https://boxd.it/1SrQ
@@ -1337,7 +1337,7 @@ Date,Name,Year,Letterboxd URI
 2022-04-21,Spider-Man: No Way Home,2021,https://boxd.it/nwRw
 2022-04-21,Everything Everywhere All at Once,2022,https://boxd.it/jUk4
 2022-04-21,3 Ninjas: High Noon at Mega Mountain,1998,https://boxd.it/1hjq
-2022-04-21,Black Mirror: San Junipero,2016,https://boxd.it/h634
+2022-04-21,Black Mirror: San Junipero,2016,https://boxd.it/k4aS
 2022-04-21,Terminator Genisys,2015,https://boxd.it/35s0
 2022-04-22,Scooby-Doo 2: Monsters Unleashed,2004,https://boxd.it/1UPA
 2022-04-22,Scooby-Doo on Zombie Island,1998,https://boxd.it/1QIg
@@ -1370,7 +1370,39 @@ Date,Name,Year,Letterboxd URI
 2022-09-03,Toy Story 4,2019,https://boxd.it/9ALu
 2022-09-05,La Cérémonie,1995,https://boxd.it/287C
 2022-09-20,The Ant Bully,2006,https://boxd.it/1XyM
-2022-09-20,The Adventures of Johnny Quasar,1995,https://boxd.it/rBIC
 2022-09-26,The Day of the Beast,1995,https://boxd.it/1Vyg
 2022-09-27,The Pink Panther 2,2009,https://boxd.it/1MHy
 2022-10-05,Cheaper by the Dozen,2003,https://boxd.it/1USa
+2022-10-13,28 Weeks Later,2007,https://boxd.it/28Bi
+2022-10-13,Critters,1986,https://boxd.it/24Sk
+2022-10-16,Tarzan II,2005,https://boxd.it/1LNU
+2022-10-16,Seven Pounds,2008,https://boxd.it/1U8w
+2022-10-16,ERASED,2016,https://boxd.it/px1A
+2022-10-16,Berserk,1997,https://boxd.it/pzgM
+2022-10-16,Frankenstein,1931,https://boxd.it/25Te
+2022-10-17,Romeo and Juliet,1968,https://boxd.it/22cQ
+2022-10-17,The Blue Lagoon,1980,https://boxd.it/22KS
+2022-10-22,Halloween Ends,2022,https://boxd.it/mO8M
+2022-10-23,Werewolf by Night,2022,https://boxd.it/xMrO
+2022-10-24,Multiplicity,1996,https://boxd.it/1Z16
+2022-10-24,A Nightmare on Elm Street Part 2: Freddy's Revenge,1985,https://boxd.it/1XiE
+2022-10-27,A Nightmare on Elm Street 3: Dream Warriors,1987,https://boxd.it/1X9W
+2022-10-28,To Live and Die in L.A.,1985,https://boxd.it/1XFo
+2022-11-07,Terminator 3: Rise of the Machines,2003,https://boxd.it/2aES
+2022-11-07,Barbarian,2022,https://boxd.it/yohi
+2022-11-10,Pumping Iron,1977,https://boxd.it/23dA
+2022-11-12,Mad Max Beyond Thunderdome,1985,https://boxd.it/1YTm
+2022-11-17,The Muppet Christmas Carol,1992,https://boxd.it/1WgC
+2022-11-27,Disturbing Behavior,1998,https://boxd.it/1YIy
+2022-11-27,Snake Eyes,1998,https://boxd.it/1ZX0
+2022-12-01,Ray,2004,https://boxd.it/28km
+2022-12-08,How the Grinch Stole Christmas!,1966,https://boxd.it/1Qj6
+2022-12-08,Snow Dogs,2002,https://boxd.it/1SQQ
+2022-12-13,Paprika,2006,https://boxd.it/23wW
+2022-12-13,The Hobbit,1977,https://boxd.it/28UY
+2022-12-14,Are We There Yet?,2005,https://boxd.it/1Tms
+2022-12-18,First Blood,1982,https://boxd.it/28U0
+2022-12-22,National Lampoon's Christmas Vacation,1989,https://boxd.it/22wQ
+2022-12-22,The Hunchback of Notre Dame II,2002,https://boxd.it/1RXQ
+2023-01-12,The Secret of NIMH,1982,https://boxd.it/1Tc8
+2023-01-30,"Militainment, Inc.: Militarism & Pop Culture",2007,https://boxd.it/5jVE
