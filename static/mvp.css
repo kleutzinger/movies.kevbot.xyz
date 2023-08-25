@@ -272,6 +272,10 @@ button {
     padding: 1rem 2rem;
 }
 
+button.kevbadge-button {
+    padding: 0;
+}
+
 button {
     font-family: var(--font-family);
 }
