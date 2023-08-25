@@ -7,7 +7,6 @@ NOYEAR = "\\N"
 
 DL_LINK = "https://datasets.imdbws.com/name.basics.tsv.gz"
 
-print("wget -q name.basics.tsv.gz csv")
 os.system("wget " + DL_LINK)
 
 print("extract gz")

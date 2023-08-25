@@ -7,3 +7,5 @@ imdb_actors.csv
 !app.json
 test.*
 .vscode/.ropeproject
+download/*
+!download/.keep
