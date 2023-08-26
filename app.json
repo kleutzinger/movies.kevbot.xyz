@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "cd /app && python3 json_create.py && npm run get-csv"
+      "predeploy": "cd /app && python3 json_create.py && npx playwright install && npm run get-csv"
     }
   }
 }

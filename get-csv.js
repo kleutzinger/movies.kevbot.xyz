@@ -17,6 +17,8 @@ const letterboxdUrl = "https://letterboxd.com/data/export/";
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
+  page.setDefaultTimeout(15000);
+  console.log(`Navigating to ${letterboxdUrl}`)
   await page.goto(letterboxdUrl);
 
   // fill in element with id signin-username
