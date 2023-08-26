@@ -31,6 +31,7 @@
     "build": "python3 json_create.py",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare-scraper": "playwright install --with-deps chromium",
     "get-csv": "node get-csv.js"
   },
   "nodemonConfig": {
