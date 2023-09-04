@@ -12,13 +12,13 @@ const letterboxdUrl = "https://letterboxd.com/data/export/";
 
 // create a new browser instance
 (async () => {
-	const start = Date.now();
+  const start = Date.now();
   //   const browser = await chromium.launch({ headless: false });
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
   page.setDefaultTimeout(15000);
-  console.log(`Navigating to ${letterboxdUrl}`)
+  console.log(`Navigating to ${letterboxdUrl}`);
   await page.goto(letterboxdUrl);
 
   // fill in element with id signin-username
@@ -33,10 +33,13 @@ const letterboxdUrl = "https://letterboxd.com/data/export/";
   await page.click("input.button");
   const download = await downloadPromise;
   await download.saveAs(DL_PATH);
+  console.log(`Downloaded to ${DL_PATH}`);
   await extract(DL_PATH, { dir: resolve("./download") });
+  console.log("extracted zip file");
   fs.copyFile("./download/watched.csv", "./watched.csv", (err) => {
     if (err) throw err;
   });
+  console.log("watched.csv copied to root directory");
   await browser.close();
   const timeElapsed = Date.now() - start;
   console.log("successfully wrote watched.csv in " + timeElapsed + "ms");
