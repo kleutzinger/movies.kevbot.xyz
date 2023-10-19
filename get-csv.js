@@ -6,6 +6,10 @@ require("dotenv").config();
 
 const LBOX_USER = process.env.LBOX_USER;
 const LBOX_PASS = process.env.LBOX_PASS;
+if (!LBOX_USER || !LBOX_PASS) {
+  console.log("Please provide a .env file with LBOX_USER and LBOX_PASS");
+  process.exit(1);
+}
 const DL_PATH = "./download/dl.zip";
 
 const letterboxdUrl = "https://letterboxd.com/data/export/";
@@ -13,7 +17,6 @@ const letterboxdUrl = "https://letterboxd.com/data/export/";
 // create a new browser instance
 (async () => {
   const start = Date.now();
-  //   const browser = await chromium.launch({ headless: false });
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
