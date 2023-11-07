@@ -33,21 +33,6 @@ function genColumns(movie) {
     { title: "Birthday", field: "meta.birthday_zodiac_html", formatter: "html" },
     { title: "Popularity", field: "meta.popularity", visible: true },
     { title: "cast_order", field: "order", visible: false },
-
-    // {
-    //   title           : "Time",
-    //   field           : "name",
-    //   sorter          : "datetime",
-    //   formatter       : "datetime",
-    //   formatterParams : {
-    //     // inputFormat        : 'YYYY-MM-DD HH:ii',
-    //     outputFormat       : "MMM Do, YYYY",
-    //     invalidPlaceholder : "(invalid date)"
-    //     // timezone           : 'America/Los_Angeles'
-    //   }
-    // },
-    // { title: "P1", field: "P1", formatter: "html" },
-    // { title: "G1", field: "G1", hozAlign: "center", formatter: gm_fmt },
   ];
 }
 // https://github.com/olifolkerd/tabulator/issues/685#issuecomment-341579977
@@ -88,12 +73,11 @@ function normalize_cast(cast, movie) {
       </div>`;
 
     actor.meta.birthday_zodiac_html =
-      actor_to_zodiac_html(actor) +
       `${
         actor.approximate_birthday
           ? actor.meta.imdb_b
           : actor.birthday || "Unknown"
-      }`;
+      }&nbsp;` + actor_to_zodiac_html(actor);
     actor.meta.status_html = actor_to_status_html(actor);
     return actor;
   });

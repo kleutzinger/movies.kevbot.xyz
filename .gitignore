@@ -9,3 +9,5 @@ test.*
 .vscode/.ropeproject
 download/*
 !download/.keep
+imdb_years.json
+*.db

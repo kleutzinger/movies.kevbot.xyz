@@ -2,18 +2,15 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // don't load table on local development
-let imdb_years = {};
-try {
-  imdb_years = require("./imdb_years.json");
-} catch (error) {
-  console.log(error);
-  console.log("please run `python3 json_create.py`");
-  console.log("starting with imdb_years = {}");
-}
 const TMDB_KEY = process.env.TMDB_KEY;
 if (!process.env.BASE_URL) {
   process.env.BASE_URL = "http://actors.kevbot.xyz";
 }
+const dboptions = {
+  readonly: true,
+  fileMustExist: true,
+};
+const db = require("better-sqlite3")("imdb_years.db", dboptions);
 const BASE_URL = process.env.BASE_URL;
 
 const { client, is_seen_by_kevin } = require("./db.js");
@@ -40,7 +37,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var cors = require("cors");
 app.use(cors());
 app.use(
-  require("serve-favicon")(path.join(__dirname, "static", "img", "favicon.ico"))
+  require("serve-favicon")(
+    path.join(__dirname, "static", "img", "favicon.ico"),
+  ),
 );
 app.use(morgan("tiny"));
 
@@ -115,14 +114,14 @@ app.get("/movie/:id", async function (req, res, next) {
     // cast_ids.push("abc");
     const promises = cast_ids.map(
       // (id) => axios.get(INTERNAL_URL + "/actor/" + id)
-      (id) => get_tmdb(id, "actor")
+      (id) => get_tmdb(id, "actor"),
     );
     Promise.allSettled(promises)
       .then((results) => {
         // results.map((e) => console.log(e.status));
         const [validResults, badResults] = _.partition(
           results,
-          (e) => e.status === "fulfilled"
+          (e) => e.status === "fulfilled",
         );
         // if (badResults.length >= 1) {
         //   console.log(badResults);
@@ -274,7 +273,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
   if (cached != null) {
     thing = JSON.parse(cached);
   } else {
-    console.log("askd tmbd api " + cache_key);
+    console.log("asked tmbd api " + cache_key);
     // console.log(_.assign(default_params, extra_params));
     const resp = await axios.get(endpoint, {
       params: _.assign(default_params, extra_params),
@@ -302,8 +301,12 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
 }
 
 function actor_backup_data(actor) {
-  const imdb_b = _.get(imdb_years, `${actor.imdb_id}.b`, null);
-  const imdb_d = _.get(imdb_years, `${actor.imdb_id}.d`, null);
+  // get current actor from imdb_years.db from the years table
+  const in_db =
+    db.prepare("SELECT * FROM years WHERE imdb_id = ?").get(actor.imdb_id) ||
+    {};
+  const imdb_b = _.get(in_db, "birth_year", null);
+  const imdb_d = _.get(in_db, "death_year", null);
   if (!actor.deathday && imdb_d) {
     // set deathday to jan 1 $YEAR
     actor.deathday = imdb_d + "-01-01";
@@ -313,13 +316,15 @@ function actor_backup_data(actor) {
     actor.birthday = imdb_b + "-01-01";
     actor.approximate_birthday = true;
   }
+  actor.imdb_b = imdb_b;
+  actor.imdb_d = imdb_d;
   return actor;
 }
 
 function actor_meta(actor) {
   let status, age, died_at, imdb_link, tmdb_link, zodiac;
-  const imdb_b = _.get(imdb_years, `${actor.imdb_id}.b`, null);
-  const imdb_d = _.get(imdb_years, `${actor.imdb_id}.d`, null);
+  const imdb_b = _.get(actor, "imdb_b", null);
+  const imdb_d = _.get(actor, "imdb_d", null);
 
   if (!actor.birthday) {
     status = "no_bday";
@@ -351,6 +356,7 @@ function actor_meta(actor) {
     imdb_b,
     imdb_d,
     zodiac,
+    approximate_birthday: actor.approximate_birthday,
   };
 }
 
