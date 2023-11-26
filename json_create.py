@@ -5,6 +5,7 @@ import json
 import sqlite3
 
 NOYEAR = "\\N"
+IMDB_YEARS_DB = "imdb_years.db"
 
 DL_LINK = "https://datasets.imdbws.com/name.basics.tsv.gz"
 
@@ -14,9 +15,10 @@ print("extract gz")
 os.system("gzip -d name.basics.tsv.gz")
 
 def init_sqlite_table():
-    if os.path.exists("imdb_years.db"):
-        os.remove("imdb_years.db",)
-    conn = sqlite3.connect("imdb_years.db")
+    if os.path.exists(IMDB_YEARS_DB):
+        print(f"removing {IMDB_YEARS_DB}")
+        os.remove(IMDB_YEARS_DB,)
+    conn = sqlite3.connect(IMDB_YEARS_DB)
     c = conn.cursor()
     c.execute('''CREATE TABLE years
                  (imdb_id text, birth_year integer, death_year integer)''')
@@ -36,10 +38,10 @@ def normalize_year(yr):
 
 new_columns = ["imdb_id", "birth_year", "death_year"]
 tsv_file = "name.basics.tsv"
-output_file = "imdb_years.json"
 year_table = dict()
 skipped = 0
 with open(tsv_file, "r", encoding="ISO-8859-1") as csvfile:
+    print(f"reading {tsv_file}")
     datareader = csv.reader(csvfile, delimiter="\t")
     lengths = collections.Counter()
     for (idx, row) in enumerate(datareader):
@@ -66,7 +68,8 @@ start = time.monotonic()
 
 # efficiently insert 10 million rows into sqlite
 
-conn = sqlite3.connect("imdb_years.db")
+print(f"inserting into {IMDB_YEARS_DB}")
+conn = sqlite3.connect(IMDB_YEARS_DB)
 c = conn.cursor()
 c.execute("BEGIN TRANSACTION")
 count = 0
@@ -76,14 +79,8 @@ for imdb_id, years in year_table.items():
 c.execute("COMMIT")
 conn.close()
 end = time.monotonic()
-print("inserted " + str(count) + " rows")
+print("inserted " + str(count) + " rows" + " into " + IMDB_YEARS_DB)
 print("took " + str(end - start) + " seconds")
-
-
-with open(output_file, "w") as outfile:
-    json.dump(year_table, outfile)
-
-print("wrote " + output_file)
 
 os.remove(tsv_file)
 print("success!")
