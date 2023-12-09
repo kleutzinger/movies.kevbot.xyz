@@ -10,7 +10,13 @@ const dboptions = {
   readonly: true,
   fileMustExist: true,
 };
-const db = require("better-sqlite3")("imdb_years.db", dboptions);
+try {
+  const db = require("better-sqlite3")("imdb_years.db", dboptions);
+} catch (err) {
+  console.log(err);
+  console.log("Please run python3 json_create.py to create imdb_years.db");
+  process.exit(1);
+}
 const BASE_URL = process.env.BASE_URL;
 
 const { client, is_seen_by_kevin } = require("./db.js");

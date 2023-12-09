@@ -20,20 +20,20 @@ const letterboxdUrl = "https://letterboxd.com/data/export/";
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
-  page.setDefaultTimeout(15000);
+  page.setDefaultTimeout(20000);
   console.log(`Navigating to ${letterboxdUrl}`);
   await page.goto(letterboxdUrl);
 
   // fill in element with id signin-username
-  await page.fill("#signin-username", LBOX_USER);
+  await page.fill("input[name='username']", LBOX_USER);
 
   // fill in password
-  await page.fill("#signin-password", LBOX_PASS);
+  await page.fill("input[name='password']", LBOX_PASS);
   // Start waiting for download before clicking. Note no await.
   const downloadPromise = page.waitForEvent("download");
 
   // click input.button
-  await page.click("input.button");
+  await page.click("button");
   const download = await downloadPromise;
   await download.saveAs(DL_PATH);
   console.log(`Downloaded to ${DL_PATH}`);
