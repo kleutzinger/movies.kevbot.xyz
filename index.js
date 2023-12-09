@@ -10,13 +10,14 @@ const dboptions = {
   readonly: true,
   fileMustExist: true,
 };
-try {
-  const db = require("better-sqlite3")("imdb_years.db", dboptions);
-} catch (err) {
-  console.log(err);
-  console.log("Please run python3 json_create.py to create imdb_years.db");
-  process.exit(1);
+var fs = require("fs");
+// check if imdb_years exists
+//
+let db;
+if (fs.existsSync("imdb_years.db")) {
+  db = require("better-sqlite3")("imdb_years.db", dboptions);
 }
+
 const BASE_URL = process.env.BASE_URL;
 
 const { client, is_seen_by_kevin } = require("./db.js");
@@ -35,7 +36,6 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 
 const path = require("path");
-var fs = require("fs");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -309,7 +309,7 @@ async function get_tmdb(id, loc = "actor", cache_expiry = 3600 * 24) {
 function actor_backup_data(actor) {
   // get current actor from imdb_years.db from the years table
   const in_db =
-    db.prepare("SELECT * FROM years WHERE imdb_id = ?").get(actor.imdb_id) ||
+    db?.prepare("SELECT * FROM years WHERE imdb_id = ?").get(actor.imdb_id) ||
     {};
   const imdb_b = _.get(in_db, "birth_year", null);
   const imdb_d = _.get(in_db, "death_year", null);
