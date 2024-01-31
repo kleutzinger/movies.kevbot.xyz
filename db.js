@@ -20,8 +20,12 @@ const parse = require("csv-parse/lib/sync");
 let kev_seen_table = {};
 const watched_csv = fs.readFileSync("watched.csv");
 const watched = parse(watched_csv, { columns: true });
+// remove non-alphanumeric characters and convert to lowercase
+const cleanString = (s) => s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 for (const movie of watched) {
-  const cur = movie["Name"] + movie["Year"];
+  // example: "The Matrix" (1999) => thematrix1999
+  const cleaned = cleanString(movie["Name"]);
+  const cur = cleaned + movie["Year"];
   kev_seen_table[cur] = true;
 }
 console.log(`Kevin has seen ${Object.keys(kev_seen_table).length} movies`);
@@ -34,7 +38,7 @@ function is_seen_by_kevin(movie) {
     const year = parseInt(_.get(movie, "release_date", "0").split("-")[0]);
     const year_plus_minus = 2;
     for (let dy = -year_plus_minus; dy <= year_plus_minus; dy++) {
-      const test_name = `${title}${year + dy}`;
+      const test_name = cleanString(`${title}${year + dy}`);
       if (kev_seen_table[test_name]) {
         return true;
       }
