@@ -4,7 +4,7 @@ dotenv.config();
 // don't load table on local development
 const TMDB_KEY = process.env.TMDB_KEY;
 if (!process.env.BASE_URL) {
-  process.env.BASE_URL = "http://actors.kevbot.xyz";
+  process.env.BASE_URL = "http://movies.kevbot.xyz";
 }
 const dboptions = {
   readonly: true,
