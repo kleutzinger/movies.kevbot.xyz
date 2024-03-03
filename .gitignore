@@ -11,3 +11,4 @@ download/*
 !download/.keep
 imdb_years.json
 *.db
+static/style.css
