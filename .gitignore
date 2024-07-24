@@ -11,3 +11,5 @@ download/*
 !download/.keep
 imdb_years.json
 *.db
+imdb_years.db-shm
+imdb_years.db-wal
