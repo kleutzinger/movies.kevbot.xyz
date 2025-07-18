@@ -13,16 +13,7 @@ async function init() {
 function events_setup() {
   // search input and button logic
   const search_input = document.getElementById("search_input");
-  // loc === multi | movie | person
-  const search_toggle = document.getElementById("search_toggle");
-  search_toggle.addEventListener("change", function () {
-    onSearchKeyUp();
-    if (this.checked) {
-      // Checkbox is checked..
-    } else {
-      // Checkbox is not checked..
-    }
-  });
+  
   document
     .getElementById("search_button_lucky")
     .addEventListener("click", async (e) => {
@@ -250,10 +241,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 function onSearchKeyUp() {
   const search_val = document.getElementById("search_input").value;
-  const loc = document.getElementById("search_toggle").checked
-    ? "person"
-    : "movie";
-  search_for(search_val || "", loc);
+  search_for(search_val || "", "movie");
 }
 
 // $("#search_term").on(

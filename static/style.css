@@ -7,7 +7,7 @@ body {
 }
 
 .main {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
@@ -54,25 +54,21 @@ h1 {
   cursor: pointer;
   white-space: nowrap;
   transition: background-color 0.2s;
+  min-width: 120px; /* Ensure minimum width for usability */
 }
 
 #search_button_lucky:hover {
   background-color: #9cc7e7;
 }
 
-.banner-top {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+
 
 .section {
   justify-content: flex-start;
   display: flex;
   flex-direction: row;
   gap: 20px;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {
@@ -91,6 +87,27 @@ h1 {
   }
 }
 
+/* For very thin screens (phones) */
+@media (max-width: 480px) {
+  .search_controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .search_box {
+    width: 100%;
+    font-size: 18px; /* Slightly smaller font for mobile */
+    padding: 12px; /* Larger padding for better touch targets */
+  }
+  
+  #search_button_lucky {
+    width: 100%;
+    min-width: unset; /* Remove min-width constraint */
+    padding: 12px 20px; /* Larger padding for better touch targets */
+    font-size: 16px;
+  }
+}
+
 .image {
   max-width: 200px;
   height: auto;
@@ -101,13 +118,15 @@ h1 {
   flex: 1;
 }
 
-.tabulator_wrapper {
-  max-width: 100%;
-  overflow-x: auto;
+.banner-top {
   background-color: white;
   border-radius: 12px;
   padding: 20px;
+  margin-bottom: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  overflow-x: auto;
+  width: 100%;
 }
 
 .tabulator {
@@ -115,6 +134,7 @@ h1 {
   max-width: 100%;
   background-color: transparent !important;
   border: none !important;
+  table-layout: fixed !important;
 }
 
 .tabulator-tableHolder {
@@ -131,23 +151,52 @@ h1 {
 }
 
 .tabulator .tabulator-header .tabulator-col {
-  flex: 1 !important;
+  flex: 0 1 auto !important;
+  min-width: 80px !important;
 }
 
 .tabulator-row .tabulator-cell {
-  flex: 1 !important;
+  flex: 0 1 auto !important;
   white-space: normal !important;
+  min-width: 80px !important;
 }
 
-/* Give slightly more space to name and character columns */
-.tabulator .tabulator-col[tabulator-field="name"],
-.tabulator-row .tabulator-cell[tabulator-field="name"] {
-  flex: 1.5 !important;
+/* Set specific widths for columns based on their content */
+.tabulator .tabulator-col[tabulator-field="meta.icon_html"],
+.tabulator-row .tabulator-cell[tabulator-field="meta.icon_html"] {
+  flex: 0 0 80px !important;
+  width: 80px !important;
 }
 
-.tabulator .tabulator-col[tabulator-field="character"],
-.tabulator-row .tabulator-cell[tabulator-field="character"] {
-  flex: 1.2 !important;
+.tabulator .tabulator-col[tabulator-field="meta.info_column_html"],
+.tabulator-row .tabulator-cell[tabulator-field="meta.info_column_html"] {
+  flex: 1 1 200px !important;
+  min-width: 150px !important;
+  max-width: 250px !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="meta.filming_age"],
+.tabulator-row .tabulator-cell[tabulator-field="meta.filming_age"] {
+  flex: 0 0 100px !important;
+  width: 100px !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="meta.status_html"],
+.tabulator-row .tabulator-cell[tabulator-field="meta.status_html"] {
+  flex: 0 0 120px !important;
+  width: 120px !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="meta.birthday_zodiac_html"],
+.tabulator-row .tabulator-cell[tabulator-field="meta.birthday_zodiac_html"] {
+  flex: 0 0 150px !important;
+  width: 150px !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="meta.popularity"],
+.tabulator-row .tabulator-cell[tabulator-field="meta.popularity"] {
+  flex: 0 0 100px !important;
+  width: 100px !important;
 }
 
 /* Override any default tabulator background colors */
@@ -218,94 +267,6 @@ body {
 
 .clickable {
   cursor: pointer;
-}
-
-.tabulator_wrapper {
-}
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 90px;
-  height: 34px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #b6dbfa;
-
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 10px;
-  background-color: rgb(255, 255, 255, 100);
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #2ab934;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(67px);
-  -ms-transform: translateX(67px);
-  transform: translateX(67px);
-}
-
-/*------ ADDED CSS ---------*/
-.on {
-  display: none;
-}
-
-.on,
-.off {
-  color: white;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  left: 50%;
-  font-size: 10px;
-  font-family: Verdana, sans-serif;
-}
-
-input:checked + .slider .on {
-  display: block;
-}
-
-input:checked + .slider .off {
-  display: none;
-}
-
-/*--------- END --------*/
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
 }
 
 .paragraph {
