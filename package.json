@@ -43,6 +43,6 @@
   "author": "Kevin Leutzinger",
   "license": "ISC",
   "engines": {
-    "node": "22.x"
+    "node": "24.x"
   }
 }
