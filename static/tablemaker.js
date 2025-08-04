@@ -90,6 +90,7 @@ function actor_to_status_html(actor) {
   let intro = "Unknown</br>Status";
   let outro = "";
   let _class;
+  let _alt_text;
   if (actor.meta.status === "alive") {
     ageish = actor.meta.age;
     intro = "alive<br/>";
@@ -98,11 +99,14 @@ function actor_to_status_html(actor) {
   if (actor.meta.status === "deceased") {
     ageish = actor.meta.died_at;
     const death_year = date2year(actor.deathday);
+    const today_age = getAge(actor.birthday, new Date());
     intro = `died ${death_year}<br/>at `;
     outro = " y.o.";
     _class = "dead_text";
+    // alt text of how old they would be today
+    _alt_text = `How old they would be today: ${today_age}`;
   }
-  return `<span class="${_class}">${intro}${ageish}${outro}<span>`;
+  return `<span class="${_class}" title="${_alt_text}">${intro}${ageish}${outro}<span>`;
 }
 
 function actor_to_icon_html(actor, small = true) {
