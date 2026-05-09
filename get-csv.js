@@ -1,49 +1,58 @@
-const { chromium } = require("playwright");
 const fs = require("fs");
+const { execFileSync } = require("child_process");
 const extract = require("extract-zip");
 const { resolve } = require("path");
-require("dotenv").config();
 
-const LBOX_USER = process.env.LBOX_USER;
-const LBOX_PASS = process.env.LBOX_PASS;
-if (!LBOX_USER || !LBOX_PASS) {
-  console.log("Please provide a .env file with LBOX_USER and LBOX_PASS");
-  process.exit(1);
+const EXPORT_URL = "https://letterboxd.com/data/export/";
+const DL_DIR = resolve("./download");
+
+function pickZip() {
+  const prompt = "Select the Letterboxd export .zip";
+  if (process.platform === "darwin") {
+    const script = `POSIX path of (choose file with prompt "${prompt}" of type {"zip", "public.zip-archive"} default location (path to downloads folder))`;
+    return execFileSync("osascript", ["-e", script], { encoding: "utf8" }).trim();
+  }
+  if (process.platform === "linux") {
+    return execFileSync(
+      "zenity",
+      ["--file-selection", `--title=${prompt}`, "--file-filter=*.zip"],
+      { encoding: "utf8" }
+    ).trim();
+  }
+  if (process.platform === "win32") {
+    const ps = `Add-Type -AssemblyName System.Windows.Forms; $f = New-Object System.Windows.Forms.OpenFileDialog; $f.Filter = 'Zip files (*.zip)|*.zip'; $f.Title = '${prompt}'; if ($f.ShowDialog() -eq 'OK') { Write-Output $f.FileName } else { exit 1 }`;
+    return execFileSync("powershell", ["-NoProfile", "-Command", ps], {
+      encoding: "utf8",
+    }).trim();
+  }
+  throw new Error(`Unsupported platform: ${process.platform}`);
 }
-const DL_PATH = "./download/dl.zip";
 
-const letterboxdUrl = "https://letterboxd.com/data/export/";
-
-// create a new browser instance
 (async () => {
   const start = Date.now();
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  page.setDefaultTimeout(20000);
-  console.log(`Navigating to ${letterboxdUrl}`);
-  await page.goto(letterboxdUrl);
 
-  // fill in element with id signin-username
-  await page.fill("input[name='username']", LBOX_USER);
+  console.log(`\nOpen this URL and download the export zip:\n  ${EXPORT_URL}\n`);
 
-  // fill in password
-  await page.fill("input[name='password']", LBOX_PASS);
-  // Start waiting for download before clicking. Note no await.
-  const downloadPromise = page.waitForEvent("download");
+  let zipPath;
+  try {
+    zipPath = pickZip();
+  } catch (e) {
+    console.error("File selection cancelled.");
+    process.exit(1);
+  }
 
-  // click input.button
-  await page.click("button");
-  const download = await downloadPromise;
-  await download.saveAs(DL_PATH);
-  console.log(`Downloaded to ${DL_PATH}`);
-  await extract(DL_PATH, { dir: resolve("./download") });
-  console.log("extracted zip file");
-  fs.copyFile("./download/watched.csv", "./watched.csv", (err) => {
-    if (err) throw err;
-  });
+  if (!zipPath || !fs.existsSync(zipPath)) {
+    console.error(`File not found: ${zipPath}`);
+    process.exit(1);
+  }
+  console.log(`Selected: ${zipPath}`);
+
+  fs.mkdirSync(DL_DIR, { recursive: true });
+  await extract(zipPath, { dir: DL_DIR });
+  console.log("Extracted zip");
+
+  fs.copyFileSync(`${DL_DIR}/watched.csv`, "./watched.csv");
   console.log("watched.csv copied to root directory");
-  await browser.close();
-  const timeElapsed = Date.now() - start;
-  console.log("successfully wrote watched.csv in " + timeElapsed + "ms");
+
+  console.log(`Done in ${Date.now() - start}ms`);
 })();
