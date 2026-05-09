@@ -1,86 +1,77 @@
+#!/usr/bin/env python3
 import csv
-import collections
+import gzip
 import os
-import json
 import sqlite3
+import time
+import urllib.request
 
 NOYEAR = "\\N"
 IMDB_YEARS_DB = "imdb_years.db"
-
 DL_LINK = "https://datasets.imdbws.com/name.basics.tsv.gz"
+GZ_FILE = "name.basics.tsv.gz"
+BATCH_SIZE = 100_000
 
-os.system("wget " + DL_LINK)
-
-print("extract gz")
-os.system("gzip -d name.basics.tsv.gz")
 
 def init_sqlite_table():
     if os.path.exists(IMDB_YEARS_DB):
         print(f"removing {IMDB_YEARS_DB}")
-        os.remove(IMDB_YEARS_DB,)
+        os.remove(IMDB_YEARS_DB)
     conn = sqlite3.connect(IMDB_YEARS_DB)
     c = conn.cursor()
     c.execute('''CREATE TABLE years
                  (imdb_id text, birth_year integer, death_year integer)''')
-    # create index on imdb_id
-    c.execute('''CREATE INDEX imdb_id_index
-                 ON years (imdb_id)''')
+    c.execute('''CREATE INDEX imdb_id_index ON years (imdb_id)''')
     conn.commit()
     conn.close()
 
 
-def normalize_year(yr):
-    if yr == "\\N":
-        return "0000"
-    else:
-        return yr.zfill(4)
+print(f"downloading {DL_LINK}")
+urllib.request.urlretrieve(DL_LINK, GZ_FILE)
 
+init_sqlite_table()
 
-new_columns = ["imdb_id", "birth_year", "death_year"]
-tsv_file = "name.basics.tsv"
-year_table = dict()
+conn = sqlite3.connect(IMDB_YEARS_DB)
+c = conn.cursor()
+
 skipped = 0
-with open(tsv_file, "r", encoding="ISO-8859-1") as csvfile:
-    print(f"reading {tsv_file}")
-    datareader = csv.reader(csvfile, delimiter="\t")
-    lengths = collections.Counter()
-    for (idx, row) in enumerate(datareader):
-        # print(idx, row)
-        imdb_id, birth, death = [row[0], row[2], row[3]]
-        lengths[len(imdb_id)] += 1
-        # birth, death = normalize_year(birth), normalize_year(death)
-        if idx % 10 ** 6 == 0 and idx != 0:
-            print(f"{idx:,} rows processed")
+count = 0
+batch = []
+start = time.monotonic()
+
+print(f"reading {GZ_FILE} and inserting into {IMDB_YEARS_DB}")
+with gzip.open(GZ_FILE, "rt", encoding="ISO-8859-1") as f:
+    reader = csv.reader(f, delimiter="\t")
+    next(reader)  # skip header
+    c.execute("BEGIN TRANSACTION")
+    for idx, row in enumerate(reader):
+        imdb_id, birth, death = row[0], row[2], row[3]
         if birth == NOYEAR and death == NOYEAR:
             skipped += 1
             continue
-        year_table[imdb_id] = dict()
-        if birth != NOYEAR:
-            year_table[imdb_id]["b"] = birth
-        if death != NOYEAR:
-            year_table[imdb_id]["d"] = death
-    print(lengths)
-print("skipped ", skipped, "actors without data")
+        batch.append((
+            imdb_id,
+            birth if birth != NOYEAR else None,
+            death if death != NOYEAR else None,
+        ))
+        if len(batch) >= BATCH_SIZE:
+            c.executemany("INSERT INTO years VALUES (?, ?, ?)", batch)
+            count += len(batch)
+            batch = []
+            c.execute("COMMIT")
+            print(f"  {count:,} rows inserted")
+            c.execute("BEGIN TRANSACTION")
 
-import time
-init_sqlite_table()
-start = time.monotonic()
+    if batch:
+        c.executemany("INSERT INTO years VALUES (?, ?, ?)", batch)
+        count += len(batch)
+    c.execute("COMMIT")
 
-# efficiently insert 10 million rows into sqlite
-
-print(f"inserting into {IMDB_YEARS_DB}")
-conn = sqlite3.connect(IMDB_YEARS_DB)
-c = conn.cursor()
-c.execute("BEGIN TRANSACTION")
-count = 0
-for imdb_id, years in year_table.items():
-    c.execute("INSERT INTO years VALUES (?, ?, ?)", (imdb_id, years.get("b", None), years.get("d", None)))
-    count += 1
-c.execute("COMMIT")
 conn.close()
-end = time.monotonic()
-print("inserted " + str(count) + " rows" + " into " + IMDB_YEARS_DB)
-print("took " + str(end - start) + " seconds")
+os.remove(GZ_FILE)
 
-os.remove(tsv_file)
+end = time.monotonic()
+print(f"skipped {skipped:,} actors without data")
+print(f"inserted {count:,} rows into {IMDB_YEARS_DB}")
+print(f"took {end - start:.1f} seconds")
 print("success!")
